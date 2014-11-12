@@ -1,0 +1,82 @@
+#desk {
+	margin-top: 10px;
+	width: 100%;
+	position: relative;
+}
+
+#desk table {
+	background-color: black;
+	margin: auto;
+	width: 754px;
+	border-spacing: 4px;
+    border-collapse: separate;
+    height: 156px;
+}
+
+#desk table tr td {
+	width: 100px;
+	height: 146px;
+	position: relative;
+	border: 2px solid white;
+	border-radius: 5px;
+	padding: 0;
+	text-align: center;
+	float: left;
+	margin-left: 2px;
+}
+
+#desk table tr td img {
+	width: 100px;
+	height: 146px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+.desk-description {
+	position: relative;
+	color: white;
+	z-index: 2;
+	top: 10px;
+}
+
+.game-fieldset {
+	width: 800px;
+}
+
+.description-fieldset {
+	position: absolute;
+	top: 0;
+	left: 830px;
+	width: 300px;
+}
+
+.log-fieldset {
+	position: absolute;
+	top: 0;
+	left: 1160px;
+	top: 0;
+	width: 500px;
+}
+
+.menu-fieldset {
+	position: absolute;
+	top: 0;
+	left: 830px;
+	top: 745px;
+	width: 300px;
+}
+
+.ennemy-hand-fieldset {
+	overflow: hidden;
+	height: 70px;
+}
+
+#focus-img {
+	width: 300px;
+}
+
+.green {
+	border: 2px solid green !important;
+}

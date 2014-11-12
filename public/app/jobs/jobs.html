@@ -1,0 +1,60 @@
+<nav class="top-bar" data-topbar role="navigation">
+	<ul class="title-area">
+		<li class="name">
+			<h1><a href="/#/jobs">Home</a></h1>
+		</li>
+	</ul>
+	<section class="top-bar-section">
+    <!-- Right Nav Section -->
+	    <ul class="right">
+	      <li class="active"><a href="/#/jobs">Jobs</a></li>
+	      <li class=""><a href="/#/applies">Applies</a></li>
+	    </ul>
+    </section>
+</nav>
+<div id="job-list" >
+	<form>
+		<fieldset>
+    		<legend>Search</legend>
+			<label for="search">Search:</label>
+			<input id="search" type="text" placeholder="search" ng-model="search">
+		</fieldset>
+	</form>
+	<ul>
+		<a ng-repeat="job in jobs | filter:search as results" ng-href="{{ '/#/jobs/' + job._id }}">
+			<li>
+				<table>
+					<thead>
+						<tr>
+							<th class="table-desc-40">Title</th>
+							<th class="table-desc-20">Created</th>
+							<th class="table-desc-20">Location</th>
+							<th class="table-desc-20">Price</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="table-desc-40">{{ job.title | na}}</td>
+							<td class="table-desc-20">{{ job.created | date: 'dd-MM-yyyy'}}</td>
+							<td class="table-desc-20">{{ job.location  | na}}</td>
+							<td class="table-desc-20">{{ job.price  | na}}</td>
+						</tr>
+					</tbody>
+					<thead>
+						<tr>
+							<th colspan="4">Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="4">{{ job.description }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</li>
+		</a>
+		<li class="animate-repeat" ng-if="results.length == 0">
+			<strong>No results found...</strong>
+	    </li>
+	</ul>
+</div>

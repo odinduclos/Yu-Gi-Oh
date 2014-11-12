@@ -1,0 +1,65 @@
+<nav class="top-bar" data-topbar role="navigation">
+	<ul class="title-area">
+		<li class="name">
+			<h1><a href="/#/jobs">Home</a></h1>
+		</li>
+	</ul>
+	<section class="top-bar-section">
+    <!-- Right Nav Section -->
+	    <ul class="right">
+	      <li class="active"><a href="/#/jobs">Jobs</a></li>
+	      <li class=""><a href="/#/applies">Applies</a></li>
+	    </ul>
+    </section>
+</nav>
+<div id="job-list" >
+	<fieldset>
+    	<legend>Offre</legend>
+		<table>
+			<thead>
+				<tr>
+					<th class="table-desc-40">Title</th>
+					<th class="table-desc-20">Created</th>
+					<th class="table-desc-20">Location</th>
+					<th class="table-desc-20">Price</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="table-desc-40">{{ job.title }}</td>
+					<td class="table-desc-20">{{ job.created | date: 'dd-MM-yyyy'}}</td>
+					<td class="table-desc-20">{{ job.location }}</td>
+					<td class="table-desc-20">{{ job.price }}</td>
+				</tr>
+			</tbody>
+			<thead>
+				<tr>
+					<th colspan="4">Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="4">{{ job.description }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<fieldset ng-if="!applied">
+    		<legend>Postuler</legend>
+			<form name="applyForm" ng-submit="createApply(job._id, apply)">
+				<label for="name">Name:</label>
+				<small class="input-error" ng-show="applyForm.name.$invalid && applyForm.name.$touched">Invalid name</small>
+				<input type="text" placeholder="Name" ng-model='apply.name' name="name" required>
+				<label for="email">Email:</label>
+				<small class="input-error" ng-show="applyForm.email.$invalid && applyForm.email.$touched">Invalid email</small>
+				<input type="email" placeholder="Email" ng-model='apply.email' name="email" required>
+				<label for="message">Message:</label>
+				<textarea placeholder="Message" ng-model='apply.message' name="message" rows="15"></textarea>
+				<input type="submit" value="Postuler" ng-disabled="applyForm.$invalid" class="button">
+			</form>
+		</fieldset>
+		<fieldset ng-if="applied">
+			<legend>Postuler</legend>
+			<p class="valid-text">You have aplied to this job!</p>
+		</fieldset>
+	</fieldset>
+</div>

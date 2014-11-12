@@ -1,0 +1,84 @@
+<div id="desk">
+	<fieldset class="game-fieldset ennemy-hand-fieldset">
+		<legend>Ennemy hand</legend>
+		<table id="places-ennemy-hand">
+			<tr>
+				<td><p class="desk-description">Card in hand 1</p></td>
+				<td><p class="desk-description">Card in hand 2</p></td>
+				<td><p class="desk-description">Card in hand 3</p></td>
+				<td><p class="desk-description">Card in hand 4</p></td>
+				<td><p class="desk-description">Card in hand 5</p></td>
+				<td><p class="desk-description">Card in hand 6</p></td>
+				<td><p class="desk-description">Card in hand 7 (destroyed)</p></td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="game-fieldset">
+		<legend>Field</legend>
+		<table id="places-table">
+			<tr>
+				<td><p class="desk-description">Deck zone</p></td>
+				<td><p class="desk-description">Fusion deck zone</p></td>
+				<td><p class="desk-description">Spell & trap card zone</p></td>
+				<td><p class="desk-description">Spell & trap card zone</p></td>
+				<td><p class="desk-description">Spell & trap card zone</p></td>
+				<td><p class="desk-description">Spell & trap card zone</p></td>
+				<td><p class="desk-description">Spell & trap card zone</p></td>
+			</tr>
+			<tr>
+				<td><p class="desk-description">Graveyard</p></td>
+				<td><p class="desk-description">Field card zone</p></td>
+				<td><p class="desk-description">Monster card zone</p></td>
+				<td><p class="desk-description">Monster card zone</p></td>
+				<td><p class="desk-description">Monster card zone</p></td>
+				<td><p class="desk-description">Monster card zone</p></td>
+				<td><p class="desk-description">Monster card zone</p></td>
+			</tr>
+			<tr>
+				<td><p class="desk-description">Graveyard</p></td>
+				<td><p class="desk-description">Field card zone</p></td>
+				<td ng-repeat="card in monsters track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
+					<p ng-if="card.state == 'visible'" class="desk-description">Attak</p>
+					<p ng-if="card.state == 'defense' || card.state == 'hidden'" class="desk-description">Défense</p>
+					<img ng-if="card.state == 'visible' || card.state == 'defense'" ng-src="{{ folder + card.img }}">
+					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+				</td>
+			</tr>
+			<tr>
+				<td><p class="desk-description">Deck zone ({{ deck.length }})</p><img ng-src="{{ folder + back.img }}"></td>
+				<td><p class="desk-description">Fusion deck zone</p></td>
+				<td ng-repeat="card in traps track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
+					<p class="desk-description">Spell & trap card zone</p>
+					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+					<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="game-fieldset">
+		<legend>My hand</legend>
+		<table id="places-self-hand">
+			<tr>
+				<td ng-repeat="card in hand track by $index" ng-mouseover="describe(card)" ng-click="select('hand', card)" ng-Class="{green: card == card_selected}">
+					<img ng-src="{{ folder + card.img }}">
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+	<fieldset class="description-fieldset">
+		<legend>Description</legend>
+		<img id="focus-img" src="{{ folder + focus.img }}" alt="description">
+		<p>{{ focus.txt }}</p>
+	</fieldset>
+	<fieldset class="menu-fieldset">
+		<legend>Menu</legend>
+		<input type="submit" ng-click="end()" value="End turn"><br>
+		<input type="submit" ng-click="play('visible')" value="Visible">
+		<input type="submit" ng-if="card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
+		<input type="submit" ng-if="card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
+	</fieldset>
+	<fieldset class="log-fieldset">
+		<legend>Figth log</legend>
+		<p ng-repeat="log in logs track by $index">{{ log }}</p>
+	</fieldset>
+</div>
