@@ -5,6 +5,8 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var path = require('path');
 
+console.log("routes");
+
 module.exports = function (app) {
 
 	app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -15,19 +17,8 @@ module.exports = function (app) {
 
 	app.use('/app/jobs', require('../app/jobs'));
 	app.use('/app/applies', require('../app/applies'));
-
-	/*app.get('/', function (req, res) {
-		res.send('Hello World');
-	});
-
-	app.get('/:name', function (req, res) {
-		res.send('Hello ' + req.param("name"));
-	});
-
-	app.post('/json', function (req, res) {
-		req.body.response = 'OK';
-		res.send(req.body);
-	});*/
+	app.use('/app/game', require('../app/game'));
+	
 	app.get('*', function (req, res) {
 		res.sendFile(path.resolve(__dirname, '../public/index.html'));
 	});

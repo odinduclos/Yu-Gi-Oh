@@ -73,7 +73,7 @@
 	<fieldset class="menu-fieldset">
 		<legend>Menu</legend>
 		<input type="submit" ng-click="end()" value="End turn"><br>
-		<input type="submit" ng-click="play('visible')" value="Visible">
+		<input type="submit" ng-if="card_selected" ng-click="play('visible')" value="Visible">
 		<input type="submit" ng-if="card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
 		<input type="submit" ng-if="card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
 	</fieldset>
