@@ -1,10 +1,13 @@
 function GameController ($scope) {
-	// draw
-	// effects
-	// main phase
-	// figth (pas si tour 0)
-	var socket = io.connect('/app/game');
 
+	var socket = io.connect();
+	var game = false;
+	var server_logs = [];
+	socket.on('server_log', function (data) {
+		console.log(data);
+		server_logs.push(data);
+	});
+	
 	$scope.game_turn = {turn: 0, first_player: true};
 	$scope.game_state = {monster_played: false, attacked: []};
 	$scope.folder = "img/cards/";

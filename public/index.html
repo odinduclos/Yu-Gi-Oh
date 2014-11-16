@@ -5,16 +5,21 @@
 	<link rel="icon" type="image/png" href="img/logo.png" />
 	<title>My HTML File</title>
 	<link rel="stylesheet" href="css/game.css">
-<!-- 	<link rel="stylesheet" href="css/foundation.css"> -->
+	<link rel="stylesheet" href="css/foundation.css">
 </head>
 <body>
 	<section ng-view></section>
 </body>
-<!-- <script src="js/vendor/modernizr.js"></script> -->
-<script src="js/socket.io.js"></script>
+<script src="js/vendor/modernizr.js"></script>
+<script src="js/vendor/jquery.js"></script>
+<script src="js/foundation/foundation.js"></script>
+<script src="js/foundation/foundation.topbar.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/angular-resource/angular-resource.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-socket-io/socket.js"></script>
 <script src="app/app.js"></script>
+<script src="app/game/game.service.js"></script>
 <script src="app/game/game.controller.js"></script>
 </html>

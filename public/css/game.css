@@ -1,7 +1,17 @@
+body {
+	background-image: url("../img/wallpaper.jpg") !important;
+}
+
 #desk {
 	margin-top: 10px;
 	width: 100%;
 	position: relative;
+	margin-bottom: 146px;
+	margin-left: 10px;
+}
+
+#desk tr {
+	background-color: black;
 }
 
 #desk table {
@@ -23,6 +33,7 @@
 	text-align: center;
 	float: left;
 	margin-left: 2px;
+	border-radius: 5px;
 }
 
 #desk table tr td img {
@@ -43,29 +54,40 @@
 
 .game-fieldset {
 	width: 800px;
+	opacity: 0.85;
+	border-radius: 5px;
 }
 
 .description-fieldset {
-	position: absolute;
+	position: fixed;
 	top: 0;
-	left: 830px;
+	right: 10px;
 	width: 300px;
+	height: 450px;
+	border-radius: 5px;
+}
+
+.menu-fieldset .button {
+	float: left;
+	margin-right: 10px;
 }
 
 .log-fieldset {
-	position: absolute;
-	top: 0;
-	left: 1160px;
-	top: 0;
-	width: 500px;
+	font-size: 12px;
+	height: 51px;
+	position: relative; 
+	z-index: 99999;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
-
 .menu-fieldset {
-	position: absolute;
-	top: 0;
-	left: 830px;
-	top: 745px;
-	width: 300px;
+	background-color: white;
+	position: fixed;
+	bottom: -18px;
+	left: 0px;
+	width: 100%;
+	z-index: 99;
+	opacity: 0.85;
 }
 
 .ennemy-hand-fieldset {

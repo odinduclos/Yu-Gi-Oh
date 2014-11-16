@@ -1,22 +1,15 @@
 'use strict';
+
 var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-var http = require('http').Server(express); // load http for socket io
-var io = require('socket.io')(http); // load socket io for multi player game
+var app = module.exports = express();
+var routes = require('./config/routes')(app);
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
 
-mongoose.connect('mongodb://epitech:epitech@ds033390.mongolab.com:33390/sandbox');
-mongoose.connection.once('open', function () {
-	console.log('BDD OK');
+app.set('port', process.env.PORT || 3000);
+
+io.sockets.on('connection', require('./config/socket'));
+
+server.listen(app.get('port'), function () {
+  console.log('Express server listening on port ' + app.get('port'));
 });
-
-require('./config/routes')(app);
-
-/*var http = require('http').Server(express); // load http for socket io
-var io = require('socket.io')(http); // load socket io for multi player game
-io.on('connection', function(socket){
-	console.log('a user connected');
-});*/
-console.log("app");
-
-app.listen(process.env.PORT || 3000);

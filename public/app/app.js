@@ -1,4 +1,4 @@
-angular.module('app', ['ngResource', 'ngRoute']);
+var app = angular.module('app', ['ngResource', 'ngRoute'])
 
 function Config ($routeProvider) {
 	$routeProvider
@@ -24,4 +24,4 @@ function Config ($routeProvider) {
 	})
 }
 
-angular.module('app').config(Config);
+app.config(Config);
