@@ -1,21 +1,7 @@
 function GameController ($scope) {
 
-	var socket = io.connect();
 	$scope.game = false;
-	$scope.server_logs = [];
-
-
-	socket.on('server_log', function (data) {
-		$scope.$apply(function () {
-			$scope.server_logs.push(data.message);
-			console.log($scope.server_logs);
-			if (data.error == 0) {
-				$scope.game = true;
-			}
-		});
-	});
-	
-
+	$scope.logs = ['Waiting for the other player'];
 	$scope.game_turn = {turn: 0, first_player: true};
 	$scope.game_state = {monster_played: false, attacked: []};
 	$scope.folder = "img/cards/";
@@ -28,16 +14,43 @@ function GameController ($scope) {
 		{_id: 5, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg"}
 	];
 	$scope.hand = [];
+	$scope.enemy_hand = [];
 	$scope.monsters = [];
 	$scope.traps = [];
 	$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
 	$scope.focus = $scope.back;
-	$scope.logs = [];
 	$scope.card_selected = null;
 
-	init();
+	var socket = io.connect();
+
+	socket.on('startGame', function (data) {
+		console.log(data);
+		$scope.$apply(function () {
+			$scope.logs.push('The game begin!');
+			init();
+		});
+	});
+
+	socket.on('endGame', function (data) {
+		$scope.$apply(function () {
+			if (data.error != 0) {
+				console.log(data.message);
+				$scope.logs.push(data.message);
+			}
+			$scope.game = false;
+			$scope.logs.push('The game end!');
+		});
+	});
+
+	socket.on('draw', function (data) {
+		console.log('YEAH');
+		$scope.$apply(function () {
+			$scope.enemy_hand.push(data);
+		});
+	});
 
 	function init() {
+		$scope.game = true;
 		if ($scope.game_turn.first_player) {
 			draw();
 		}
@@ -49,6 +62,7 @@ function GameController ($scope) {
 		destination.push(source[card]);
 		$scope.logs.push("Draw: " + source[card].name);
 		source.splice(card, 1);
+		socket.emit('draw', {error: 0, card: card});
 		return card;
 	}
 

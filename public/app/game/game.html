@@ -1,7 +1,7 @@
 <fieldset ng-if="!game" id="server_logs">
 	<legend>Server logs</legend>
 	<ul>
-		<li ng-repeat="log in server_logs track by $index">{{log}}</li>
+		<li ng-repeat="log in logs track by $index">{{log}}</li>
 	</ul>
 </fieldset>
 <div id="desk" ng-if="game">
@@ -9,13 +9,16 @@
 		<legend>Ennemy hand</legend>
 		<table id="places-ennemy-hand">
 			<tr>
-				<td><p class="desk-description">Card in hand 1</p></td>
+				<td ng-repeat="card in enemy_hand track by $index">
+					<img ng-src="{{ folder + back.img }}">
+				</td>
+				<!-- <td><p class="desk-description">Card in hand 1</p></td>
 				<td><p class="desk-description">Card in hand 2</p></td>
 				<td><p class="desk-description">Card in hand 3</p></td>
 				<td><p class="desk-description">Card in hand 4</p></td>
 				<td><p class="desk-description">Card in hand 5</p></td>
 				<td><p class="desk-description">Card in hand 6</p></td>
-				<td><p class="desk-description">Card in hand 7 (destroyed)</p></td>
+				<td><p class="desk-description">Card in hand 7 (destroyed)</p></td> -->
 			</tr>
 		</table>
 	</fieldset>
