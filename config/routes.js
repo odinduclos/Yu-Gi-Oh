@@ -12,7 +12,7 @@ module.exports = function (app) {
 	app.use(bodyParser.json());
 	app.use(methodOverride());
 
-/*	app.use('/app/game', require('../app/game'));*/
+	app.use('/app/game', require('../app/game'));
 	
 	app.get('*', function (req, res) {
 		res.sendFile(path.resolve(__dirname, '../public/index.html'));

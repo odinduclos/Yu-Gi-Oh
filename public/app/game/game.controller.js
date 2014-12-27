@@ -1,13 +1,21 @@
 function GameController ($scope) {
 
 	var socket = io.connect();
-	var game = false;
-	var server_logs = [];
+	$scope.game = false;
+	$scope.server_logs = [];
+
+
 	socket.on('server_log', function (data) {
-		console.log(data);
-		server_logs.push(data);
+		$scope.$apply(function () {
+			$scope.server_logs.push(data.message);
+			console.log($scope.server_logs);
+			if (data.error == 0) {
+				$scope.game = true;
+			}
+		});
 	});
 	
+
 	$scope.game_turn = {turn: 0, first_player: true};
 	$scope.game_state = {monster_played: false, attacked: []};
 	$scope.folder = "img/cards/";

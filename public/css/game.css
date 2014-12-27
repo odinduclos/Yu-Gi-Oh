@@ -1,5 +1,13 @@
 body {
-	background-image: url("../img/wallpaper.jpg") !important;
+	margin:0;
+	padding:0;
+	background: url(../img/wallpaper.jpg) no-repeat center fixed !important; 
+	-webkit-background-size: cover; /* pour anciens Chrome et Safari */
+	background-size: cover; /* version standardisée */
+}
+
+#server_logs ul li {
+	color: white;
 }
 
 #desk {

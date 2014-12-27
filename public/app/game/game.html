@@ -1,7 +1,7 @@
-<fieldset ng-if="!game">
+<fieldset ng-if="!game" id="server_logs">
 	<legend>Server logs</legend>
 	<ul>
-		<li></li>
+		<li ng-repeat="log in server_logs track by $index">{{log}}</li>
 	</ul>
 </fieldset>
 <div id="desk" ng-if="game">

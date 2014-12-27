@@ -13,4 +13,15 @@ exports.start = function (req, res) {
 	io.on('connection', function(socket){
 	  console.log('a user connected');
 	});
+
+	socket.on('disconnect', function(){
+		for (var i = 0; i < users.length; i++) {
+			if (users[i].socket.id == socket.id) {
+				// console.log("splice", users[i].id);
+				users.splice(i, 1);
+				break;
+			}
+		}
+		console.log('user disconnected');
+	});
 }

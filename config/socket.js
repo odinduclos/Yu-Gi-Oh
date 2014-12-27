@@ -11,14 +11,13 @@ module.exports = function (socket) {
 			break;
 		}
 	}
-	/*for (var i = 0; i < users.length; i++) {
-		console.log(users[i].id);
-	};*/
 	if (!ennemy_socket) {
-		socket
-		socket.emit('server_log', 'Waiting for the other player...');
+		socket.emit('server_log', {error: 1, message: 'Waiting for the other player...'});
+		console.log('Waiting for the other player...');
 	} else {
-		socket.emit('server_log', 'The other player is already here!');
+		socket.emit('server_log', {error: 0, message: 'The other player is already here!'});
+		ennemy_socket.emit('server_log', {error: 0, message: 'The other player is already here!'});
+		console.log('The other player is already here!');
 	}
 	var user = {
 		socket: socket,
