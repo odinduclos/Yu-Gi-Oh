@@ -26,10 +26,12 @@ module.exports = function (socket) {
 		other = user;
 	}
 	socket.on('draw', function (data) {
-		console.log(other.id);
-		console.log(data);
 		if (data.error == 0)
-			socket.to(user.room).emit('draw', {error: 0});
+			socket.to(user.room).emit('draw', data);
+	});
+	socket.on('play', function (data) {
+		if (data.error == 0)
+			socket.to(user.room).emit('play', data);
 	});
 	socket.on('disconnect', function () {
 		user.connected = false;

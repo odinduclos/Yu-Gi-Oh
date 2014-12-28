@@ -16,10 +16,15 @@ function GameController ($scope) {
 	$scope.hand = [];
 	$scope.enemy_hand = [];
 	$scope.monsters = [];
+	$scope.enemy_monsters = [];
 	$scope.traps = [];
+	$scope.enemy_traps = [];
 	$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
 	$scope.focus = $scope.back;
 	$scope.card_selected = null;
+	$scope.pv = 3000;
+	$scope.name = 'Dino';
+	$scope.tip = 'Your turn';
 
 	var socket = io.connect();
 
@@ -43,9 +48,21 @@ function GameController ($scope) {
 	});
 
 	socket.on('draw', function (data) {
-		console.log('YEAH');
 		$scope.$apply(function () {
 			$scope.enemy_hand.push(data);
+		});
+	});
+
+	socket.on('play', function (data) {
+		$scope.$apply(function () {
+			console.log(data);
+			if (data.card.from == 'hand') {
+				if (data.card.type == 'monster') {
+					playCard($scope.enemy_hand, $scope.enemy_monsters, data.card, data.state);
+				} else if (data.card.type == 'trap' || data.card.type == 'spell') {
+					playCard($scope.enemy_hand, $scope.enemy_traps, data.card, data.state);
+				}
+			}
 		});
 	});
 
@@ -57,7 +74,6 @@ function GameController ($scope) {
 	}
 
 	function drawCard (source, destination) {
-		// get server response
 		var card = Math.round(Math.random() * (source.length - 1));
 		destination.push(source[card]);
 		$scope.logs.push("Draw: " + source[card].name);
@@ -73,6 +89,7 @@ function GameController ($scope) {
 		for (var i = 0; i < source.length; i++) {
 			if (source[i] == card) {
 				source.splice(i, 1);
+				socket.emit('play', {error: 0, card: card, state: state});
 				return;
 			}
 		};
@@ -80,6 +97,12 @@ function GameController ($scope) {
 
 	$scope.describe = function (card) {
         $scope.focus = card;
+    }
+
+    $scope.describe_enemy = function (card) {
+    	if (card.state != 'hidden')
+        	$scope.focus = card;
+        else $scope.focus = $scope.back;
     }
 
 	function draw () {
@@ -105,7 +128,7 @@ function GameController ($scope) {
 				}
 				$scope.game_state.monster_played = true;
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, state);
-			} else {
+			} else if ($scope.card_selected.type == 'trap' || $scope.card_selected.type == 'spell') {
 				playCard($scope.hand, $scope.traps, $scope.card_selected, state);
 			}
 		}
@@ -113,12 +136,12 @@ function GameController ($scope) {
 
 	$scope.end = function () {
 		// changer pour le multi
-		/*if (!$scope.game_turn.first_player) {
+		if (!$scope.game_turn.first_player) {
 			$scope.game_turn.turn++;
 			$scope.game_turn.first_player = true;
 		} else {
 			$scope.game_turn.first_player = false;
-		}*/
+		}
 
 		// TEST
 		$scope.game_turn.turn++;

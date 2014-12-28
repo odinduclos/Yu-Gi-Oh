@@ -12,13 +12,6 @@
 				<td ng-repeat="card in enemy_hand track by $index">
 					<img ng-src="{{ folder + back.img }}">
 				</td>
-				<!-- <td><p class="desk-description">Card in hand 1</p></td>
-				<td><p class="desk-description">Card in hand 2</p></td>
-				<td><p class="desk-description">Card in hand 3</p></td>
-				<td><p class="desk-description">Card in hand 4</p></td>
-				<td><p class="desk-description">Card in hand 5</p></td>
-				<td><p class="desk-description">Card in hand 6</p></td>
-				<td><p class="desk-description">Card in hand 7 (destroyed)</p></td> -->
 			</tr>
 		</table>
 	</fieldset>
@@ -28,20 +21,21 @@
 			<tr>
 				<td><p class="desk-description">Deck zone</p></td>
 				<td><p class="desk-description">Fusion deck zone</p></td>
-				<td><p class="desk-description">Spell & trap card zone</p></td>
-				<td><p class="desk-description">Spell & trap card zone</p></td>
-				<td><p class="desk-description">Spell & trap card zone</p></td>
-				<td><p class="desk-description">Spell & trap card zone</p></td>
-				<td><p class="desk-description">Spell & trap card zone</p></td>
+				<td ng-repeat="card in enemy_traps track by $index" ng-mouseover="describe_enemy(card)">
+					<p class="desk-description">Spell & trap card zone</p>
+					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+					<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
+				</td>
 			</tr>
 			<tr>
 				<td><p class="desk-description">Graveyard</p></td>
 				<td><p class="desk-description">Field card zone</p></td>
-				<td><p class="desk-description">Monster card zone</p></td>
-				<td><p class="desk-description">Monster card zone</p></td>
-				<td><p class="desk-description">Monster card zone</p></td>
-				<td><p class="desk-description">Monster card zone</p></td>
-				<td><p class="desk-description">Monster card zone</p></td>
+				<td ng-repeat="card in enemy_monsters track by $index" ng-mouseover="describe_enemy(card)">
+					<p ng-if="card.state == 'visible'" class="desk-description">Attak</p>
+					<p ng-if="card.state == 'defense' || card.state == 'hidden'" class="desk-description">Défense</p>
+					<img ng-if="card.state == 'visible' || card.state == 'defense'" ng-src="{{ folder + card.img }}">
+					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+				</td>
 			</tr>
 			<tr>
 				<td><p class="desk-description">Graveyard</p></td>
@@ -74,9 +68,23 @@
 			</tr>
 		</table>
 	</fieldset>
+	<fieldset class="player-fieldset">
+		<legend>Joueur</legend>
+		{{name}} {{pv}} pv
+		<progress class="pb_pv" id="pb_pv_player" value="{{pv}}" max="3000">{{pv}} / 3000 pv</progress>
+	</fieldset>
+	<fieldset class="other-player-fieldset">
+		<legend>Opposant</legend>
+		{{name}} {{pv}} pv
+		<progress class="pb_pv" id="pb_pv_other" value="{{pv}}" max="3000">{{pv}} / 3000 pv</progress>
+	</fieldset>
 	<fieldset class="description-fieldset">
 		<legend>Description</legend>
 		<img id="focus-img" src="{{ folder + focus.img }}" alt="description">
+	</fieldset>
+	<fieldset class="tip-fieldset">
+		<legend>Tip</legend>
+		{{tip}}
 	</fieldset>
 	<fieldset class="menu-fieldset">
 		<legend>Menu</legend>

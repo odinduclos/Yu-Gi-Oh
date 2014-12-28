@@ -68,11 +68,45 @@ body {
 
 .description-fieldset {
 	position: fixed;
-	top: 0;
+	top: 230px;
 	right: 10px;
 	width: 300px;
 	height: 450px;
 	border-radius: 5px;
+}
+
+.player-fieldset {
+	position: fixed;
+	top: 0;
+	right: 10px;
+	width: 300px;
+	height: 100px;
+	border-radius: 5px;
+	background-color: white;
+	opacity: 0.85;
+}
+
+.other-player-fieldset {
+	position: fixed;
+	top: 100px;
+	right: 10px;
+	width: 300px;
+	height: 100px;
+	border-radius: 5px;
+	background-color: white;
+	opacity: 0.85;
+}
+
+.pb_pv {
+	width: 100%;
+}
+
+#pb_pv_player {
+	background-color: green;
+}
+
+#pb_pv_other {
+	background-color: red;
 }
 
 .menu-fieldset .button {
@@ -94,6 +128,16 @@ body {
 	bottom: -18px;
 	left: 0px;
 	width: 100%;
+	z-index: 99;
+	opacity: 0.85;
+}
+
+.tip-fieldset {
+	background-color: white;
+	position: fixed;
+	bottom: 110px;
+	right: 0;
+	width: 300px;
 	z-index: 99;
 	opacity: 0.85;
 }
