@@ -13,17 +13,16 @@ body {
 #desk {
 	margin-top: 10px;
 	width: 100%;
-	position: relative;
-	margin-bottom: 146px;
+	/*margin-bottom: 146px;*/
 	margin-left: 10px;
 }
 
-#desk tr {
+#desk tr td {
 	background-color: black;
 }
 
 #desk table {
-	background-color: black;
+	background-color: transparent !important;
 	margin: auto;
 	width: 754px;
 	border-spacing: 4px;
@@ -44,6 +43,10 @@ body {
 	border-radius: 5px;
 }
 
+#desk table tr.even, table tr.alt, table tr:nth-of-type(even) {
+	background-color: transparent !important;
+}
+
 #desk table tr td img {
 	width: 100px;
 	height: 146px;
@@ -62,12 +65,12 @@ body {
 
 .game-fieldset {
 	width: 800px;
-	opacity: 0.85;
+	/*opacity: 0.85;*/
 	border-radius: 5px;
 }
 
 .description-fieldset {
-	position: fixed;
+	/*position: fixed;*/
 	top: 230px;
 	right: 10px;
 	width: 300px;
@@ -76,25 +79,25 @@ body {
 }
 
 .player-fieldset {
-	position: fixed;
+	/*position: fixed;*/
 	top: 0;
 	right: 10px;
 	width: 300px;
 	height: 100px;
 	border-radius: 5px;
 	background-color: white;
-	opacity: 0.85;
+	/*opacity: 0.85;*/
 }
 
 .other-player-fieldset {
-	position: fixed;
+	/*position: fixed;*/
 	top: 100px;
 	right: 10px;
 	width: 300px;
 	height: 100px;
 	border-radius: 5px;
 	background-color: white;
-	opacity: 0.85;
+	/*opacity: 0.85;*/
 }
 
 .pb_pv {
@@ -114,6 +117,23 @@ body {
 	margin-right: 10px;
 }
 
+#info_players {
+	float: left;
+	margin-left: 20px;
+	z-index: 7;
+}
+
+#description_card {
+	float: left;
+	margin-left: 20px;
+	z-index: 8;
+}
+
+#board {
+	float: left;
+	z-index: 1;
+}
+
 .log-fieldset {
 	font-size: 12px;
 	height: 51px;
@@ -122,24 +142,30 @@ body {
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
+#menu {
+	margin-left: 20px;
+	float: left;
+	z-index: 99;
+}
 .menu-fieldset {
 	background-color: white;
-	position: fixed;
-	bottom: -18px;
-	left: 0px;
-	width: 100%;
-	z-index: 99;
-	opacity: 0.85;
+/*	position: fixed;
+	top: -18px;
+	left: 0px;*/
+	/*width: 100%;*/
+	z-index: 9;
+	min-width: 800px;
+	/*opacity: 0.85;*/
 }
 
 .tip-fieldset {
 	background-color: white;
-	position: fixed;
+	/*position: fixed;*/
 	bottom: 110px;
 	right: 0;
 	width: 300px;
 	z-index: 99;
-	opacity: 0.85;
+	/*opacity: 0.85;*/
 }
 
 .ennemy-hand-fieldset {

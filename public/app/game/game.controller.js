@@ -2,7 +2,7 @@ function GameController ($scope) {
 
 	$scope.game = false;
 	$scope.logs = ['Waiting for the other player'];
-	$scope.game_turn = {turn: 0, first_player: true};
+	$scope.game_turn = {turn: 0, my_turn: true};
 	$scope.game_state = {monster_played: false, attacked: []};
 	$scope.folder = "img/cards/";
 	$scope.deck = [
@@ -31,8 +31,12 @@ function GameController ($scope) {
 	socket.on('startGame', function (data) {
 		console.log(data);
 		$scope.$apply(function () {
+			$scope.tip = 'The game begin!';
 			$scope.logs.push('The game begin!');
-			init();
+			$scope.game_turn.my_turn = data.your_turn;
+			$scope.game = true;
+			if ($scope.game_turn.my_turn)
+				init();
 		});
 	});
 
@@ -43,17 +47,20 @@ function GameController ($scope) {
 				$scope.logs.push(data.message);
 			}
 			$scope.game = false;
+			$scope.tip = 'The game end!';
 			$scope.logs.push('The game end!');
 		});
 	});
 
 	socket.on('draw', function (data) {
+		$scope.logs.push('Ennemy draw.');
 		$scope.$apply(function () {
 			$scope.enemy_hand.push(data);
 		});
 	});
 
 	socket.on('play', function (data) {
+		$scope.logs.push('Ennemy play a card.');
 		$scope.$apply(function () {
 			console.log(data);
 			if (data.card.from == 'hand') {
@@ -66,9 +73,19 @@ function GameController ($scope) {
 		});
 	});
 
+	socket.on('end_turn', function (data) {
+		$scope.tip = 'Your turn!';
+		$scope.logs.push('Your turn!');
+		$scope.$apply(function () {
+			$scope.game_state.monster_played = false;
+			$scope.game_state.attacked = [];
+			$scope.game_turn.my_turn = true;
+			draw();
+		});
+	});
+
 	function init() {
-		$scope.game = true;
-		if ($scope.game_turn.first_player) {
+		if ($scope.game_turn.my_turn) {
 			draw();
 		}
 	}
@@ -76,20 +93,22 @@ function GameController ($scope) {
 	function drawCard (source, destination) {
 		var card = Math.round(Math.random() * (source.length - 1));
 		destination.push(source[card]);
-		$scope.logs.push("Draw: " + source[card].name);
 		source.splice(card, 1);
 		socket.emit('draw', {error: 0, card: card});
+		$scope.tip = "Draw: " + source[card].name + '.';
+		$scope.logs.push("Draw: " + source[card].name + '.');
 		return card;
 	}
 
 	function playCard (source, destination, card, state) {
 		card.state = state;
 		destination.push(card);
-		$scope.logs.push("Play: " + card.name + ' in ' + state);
 		for (var i = 0; i < source.length; i++) {
 			if (source[i] == card) {
 				source.splice(i, 1);
 				socket.emit('play', {error: 0, card: card, state: state});
+				$scope.tip = "Play: " + card.name + ' in ' + state + '.';
+				$scope.logs.push("Play: " + card.name + ' in ' + state + '.');
 				return;
 			}
 		};
@@ -107,7 +126,8 @@ function GameController ($scope) {
 
 	function draw () {
 		if ($scope.deck.length == 0) {
-			$scope.logs.push("You have no more cards in your deck");
+			$scope.tip = "You have no more cards in your deck.";
+			$scope.logs.push("You have no more cards in your deck.");
 			return;
 		}
 		if ($scope.game_turn.turn == 0) {
@@ -123,7 +143,8 @@ function GameController ($scope) {
 		if ($scope.card_selected.from == 'hand') {
 			if ($scope.card_selected.type == 'monster') {
 				if ($scope.game_state.monster_played) {
-					$scope.logs.push("You already have played a monster");
+					$scope.tip = "You already have played a monster.";
+					$scope.logs.push("You already have played a monster.");
 					return;
 				}
 				$scope.game_state.monster_played = true;
@@ -135,23 +156,11 @@ function GameController ($scope) {
 	}
 
 	$scope.end = function () {
-		// changer pour le multi
-		if (!$scope.game_turn.first_player) {
-			$scope.game_turn.turn++;
-			$scope.game_turn.first_player = true;
-		} else {
-			$scope.game_turn.first_player = false;
-		}
-
-		// TEST
+		$scope.tip = "It is not your turn.";
+		$scope.logs.push("Ennemy's turn.");
+		socket.emit('end_turn', {error: 0});
 		$scope.game_turn.turn++;
-		// TEST
-
-		$scope.game_state.monster_played = false;
-		$scope.game_state.attacked = [];
-		draw();
-		// mono test
-		// $scope.end();
+		$scope.game_turn.my_turn = false;
 	}
 
 	$scope.playSpell = function (card) {

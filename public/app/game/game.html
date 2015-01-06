@@ -5,95 +5,103 @@
 	</ul>
 </fieldset>
 <div id="desk" ng-if="game">
-	<fieldset class="game-fieldset ennemy-hand-fieldset">
-		<legend>Ennemy hand</legend>
-		<table id="places-ennemy-hand">
-			<tr>
-				<td ng-repeat="card in enemy_hand track by $index">
-					<img ng-src="{{ folder + back.img }}">
-				</td>
-			</tr>
-		</table>
-	</fieldset>
-	<fieldset class="game-fieldset">
-		<legend>Field</legend>
-		<table id="places-table">
-			<tr>
-				<td><p class="desk-description">Deck zone</p></td>
-				<td><p class="desk-description">Fusion deck zone</p></td>
-				<td ng-repeat="card in enemy_traps track by $index" ng-mouseover="describe_enemy(card)">
-					<p class="desk-description">Spell & trap card zone</p>
-					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
-					<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
-				</td>
-			</tr>
-			<tr>
-				<td><p class="desk-description">Graveyard</p></td>
-				<td><p class="desk-description">Field card zone</p></td>
-				<td ng-repeat="card in enemy_monsters track by $index" ng-mouseover="describe_enemy(card)">
-					<p ng-if="card.state == 'visible'" class="desk-description">Attak</p>
-					<p ng-if="card.state == 'defense' || card.state == 'hidden'" class="desk-description">Défense</p>
-					<img ng-if="card.state == 'visible' || card.state == 'defense'" ng-src="{{ folder + card.img }}">
-					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
-				</td>
-			</tr>
-			<tr>
-				<td><p class="desk-description">Graveyard</p></td>
-				<td><p class="desk-description">Field card zone</p></td>
-				<td ng-repeat="card in monsters track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
-					<p ng-if="card.state == 'visible'" class="desk-description">Attak</p>
-					<p ng-if="card.state == 'defense' || card.state == 'hidden'" class="desk-description">Défense</p>
-					<img ng-if="card.state == 'visible' || card.state == 'defense'" ng-src="{{ folder + card.img }}">
-					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
-				</td>
-			</tr>
-			<tr>
-				<td><p class="desk-description">Deck zone ({{ deck.length }})</p><img ng-src="{{ folder + back.img }}"></td>
-				<td><p class="desk-description">Fusion deck zone</p></td>
-				<td ng-repeat="card in traps track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
-					<p class="desk-description">Spell & trap card zone</p>
-					<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
-					<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
-				</td>
-			</tr>
-		</table>
-	</fieldset>
-	<fieldset class="game-fieldset">
-		<legend>My hand</legend>
-		<table id="places-self-hand">
-			<tr>
-				<td ng-repeat="card in hand track by $index" ng-mouseover="describe(card)" ng-click="select('hand', card)" ng-Class="{green: card == card_selected}">
-					<img ng-src="{{ folder + card.img }}">
-				</td>
-			</tr>
-		</table>
-	</fieldset>
-	<fieldset class="player-fieldset">
-		<legend>Joueur</legend>
-		{{name}} {{pv}} pv
-		<progress class="pb_pv" id="pb_pv_player" value="{{pv}}" max="3000">{{pv}} / 3000 pv</progress>
-	</fieldset>
-	<fieldset class="other-player-fieldset">
-		<legend>Opposant</legend>
-		{{name}} {{pv}} pv
-		<progress class="pb_pv" id="pb_pv_other" value="{{pv}}" max="3000">{{pv}} / 3000 pv</progress>
-	</fieldset>
-	<fieldset class="description-fieldset">
-		<legend>Description</legend>
-		<img id="focus-img" src="{{ folder + focus.img }}" alt="description">
-	</fieldset>
-	<fieldset class="tip-fieldset">
-		<legend>Tip</legend>
-		{{tip}}
-	</fieldset>
-	<fieldset class="menu-fieldset">
-		<legend>Menu</legend>
-		<input type="submit" class="button" ng-if="card_selected" ng-click="play('visible')" value="Visible">
-		<input type="submit" class="button" ng-if="card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
-		<input type="submit" class="button" ng-if="card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
-		<input type="submit" id="end-turn" class="button alert" ng-click="end()" value="End turn">
-		<ul class="log-fieldset">
-			<li ng-repeat="log in logs track by $index">{{ log }}</li>
-		</ul>
-	</fieldset>
+	<div id="board" draggable>
+		<fieldset class="game-fieldset ennemy-hand-fieldset">
+			<legend>Ennemy hand</legend>
+			<table id="places-ennemy-hand">
+				<tr>
+					<td ng-repeat="card in enemy_hand track by $index">
+						<img ng-src="{{ folder + back.img }}">
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="game-fieldset">
+			<legend>Field</legend>
+			<table id="places-table">
+				<tr>
+					<td><p class="desk-description">Deck zone</p></td>
+					<td><p class="desk-description">Fusion deck zone</p></td>
+					<td ng-repeat="card in enemy_traps track by $index" ng-mouseover="describe_enemy(card)">
+						<p class="desk-description">Spell & trap card zone</p>
+						<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+						<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
+					</td>
+				</tr>
+				<tr>
+					<td><p class="desk-description">Graveyard</p></td>
+					<td><p class="desk-description">Field card zone</p></td>
+					<td ng-repeat="card in enemy_monsters track by $index" ng-mouseover="describe_enemy(card)">
+						<p ng-if="card.state == 'visible'" class="desk-description">Attak</p>
+						<p ng-if="card.state == 'defense' || card.state == 'hidden'" class="desk-description">Défense</p>
+						<img ng-if="card.state == 'visible' || card.state == 'defense'" ng-src="{{ folder + card.img }}">
+						<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+					</td>
+				</tr>
+				<tr>
+					<td><p class="desk-description">Graveyard</p></td>
+					<td><p class="desk-description">Field card zone</p></td>
+					<td ng-repeat="card in monsters track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
+						<p ng-if="card.state == 'visible'" class="desk-description">Attak</p>
+						<p ng-if="card.state == 'defense' || card.state == 'hidden'" class="desk-description">Défense</p>
+						<img ng-if="card.state == 'visible' || card.state == 'defense'" ng-src="{{ folder + card.img }}">
+						<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+					</td>
+				</tr>
+				<tr>
+					<td><p class="desk-description">Deck zone ({{ deck.length }})</p><img ng-src="{{ folder + back.img }}"></td>
+					<td><p class="desk-description">Fusion deck zone</p></td>
+					<td ng-repeat="card in traps track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
+						<p class="desk-description">Spell & trap card zone</p>
+						<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
+						<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="game-fieldset" draggable>
+			<legend>My hand</legend>
+			<table id="places-self-hand">
+				<tr>
+					<td ng-repeat="card in hand track by $index" ng-mouseover="describe(card)" ng-click="select('hand', card)" ng-Class="{green: card == card_selected}">
+						<img ng-src="{{ folder + card.img }}">
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+	</div>
+	<div id="info_players" draggable>
+		<fieldset class="player-fieldset">
+			<legend>Joueur</legend>
+			{{name}} {{pv}} pv
+			<progress class="pb_pv" id="pb_pv_player" value="{{pv}}" max="3000">{{pv}} / 3000 pv</progress>
+		</fieldset>
+		<fieldset class="other-player-fieldset">
+			<legend>Opposant</legend>
+			{{name}} {{pv}} pv
+			<progress class="pb_pv" id="pb_pv_other" value="{{pv}}" max="3000">{{pv}} / 3000 pv</progress>
+		</fieldset>
+		<fieldset class="tip-fieldset">
+			<legend>Tip</legend>
+			{{tip}}
+		</fieldset>
+	</div>
+	<div id="description_card" draggable>
+		<fieldset class="description-fieldset">
+			<legend>Description</legend>
+			<img id="focus-img" src="{{ folder + focus.img }}" alt="description">
+		</fieldset>
+	</div>
+	<div id="menu" draggable>
+		<fieldset class="menu-fieldset">
+			<legend>Menu</legend>
+			<input type="submit" class="button" ng-if="card_selected" ng-click="play('visible')" value="Visible">
+			<input type="submit" class="button" ng-if="card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
+			<input type="submit" class="button" ng-if="card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
+			<input ng-if="game_turn.my_turn" type="submit" id="end-turn" class="button alert" ng-click="end()" value="End turn">
+			<ul class="log-fieldset">
+				<li ng-repeat="log in logs track by $index | reverse">{{ log }}</li>
+			</ul>
+		</fieldset>
+	</div>
 </div>
