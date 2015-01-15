@@ -6,10 +6,10 @@ function GameController ($scope) {
 	$scope.game_state = {monster_played: false, attacked: []};
 	$scope.folder = "img/cards/";
 	$scope.deck = [
-		{_id: 1, star: 8, attack: 3000, def: 2500, state: 'visible', type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
-		{_id: 2, star: 7, attack: 2500, def: 2100, state: 'visible', type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
-		{_id: 3, star: 8, attack: 2850, def: 2350, state: 'visible', type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-		{_id: 4, star: 4, attack: 1400, def: 1200, state: 'visible', type: 'monster', name: "Dragon à corne", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
+		{_id: 1, star: 8, attack: 3000, def: 2500, state: 'visible', position: 'attack', type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
+		{_id: 2, star: 7, attack: 2500, def: 2100, state: 'visible', position: 'attack', type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
+		{_id: 3, star: 8, attack: 2850, def: 2350, state: 'visible', position: 'attack', type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+		{_id: 4, star: 4, attack: 1400, def: 1200, state: 'visible', position: 'attack', type: 'monster', name: "Dragon à corne", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
 		{_id: 5, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
 		{_id: 5, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg"}
 	];
@@ -19,12 +19,18 @@ function GameController ($scope) {
 	$scope.enemy_monsters = [];
 	$scope.traps = [];
 	$scope.enemy_traps = [];
+	$scope.graveyard = [];
+	$scope.enemy_graveyard = [];
 	$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
 	$scope.focus = $scope.back;
 	$scope.card_selected = null;
 	$scope.pv = 3000;
 	$scope.name = 'Dino';
+	$scope.enemy_pv = 3000;
+	$scope.enemy_name = 'Julien';
 	$scope.tip = 'Your turn';
+	$scope.switch_value = 'switch';
+	$scope.action = '';
 
 	var socket = io.connect();
 
@@ -92,11 +98,11 @@ function GameController ($scope) {
 
 	function drawCard (source, destination) {
 		var card = Math.round(Math.random() * (source.length - 1));
-		destination.push(source[card]);
-		source.splice(card, 1);
-		socket.emit('draw', {error: 0, card: card});
 		$scope.tip = "Draw: " + source[card].name + '.';
 		$scope.logs.push("Draw: " + source[card].name + '.');
+		destination.push(source[card]);
+		socket.emit('draw', {error: 0, card: card});
+		source.splice(card, 1);
 		return card;
 	}
 
@@ -168,9 +174,53 @@ function GameController ($scope) {
 		// call the rigth function
 	}
 
+	function change_switch_value (card) {
+		if ($scope.card_selected.position == 'attack') {
+			$scope.switch_value = 'Defense';
+		} else if ($scope.card_selected.position == 'defense') {
+			$scope.switch_value = 'Attack';
+		} else {
+			$scope.switch_value = 'Switch';
+		}
+	}
+
 	$scope.select = function (from, card) {
 		$scope.card_selected = card;
 		$scope.card_selected.from = from;
+		change_switch_value($scope.card_selected);
+	}
+
+	$scope.attack = function () {
+		if ($scope.enemy_monsters.length == 0) {
+			$scope.tip = $scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack + " damages.";
+			$scope.logs.push($scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack + " damages.");
+			$scope.enemy_pv -= $scope.card_selected.attack;
+		} else {
+			$scope.tip = "Select a target.";
+			$scope.logs.push("Select a target.");
+			$scope.action = 'attack';
+		}
+	}
+
+	$scope.switch_position = function () {
+		if ($scope.card_selected.position == 'attack') {
+			$scope.card_selected.position = 'defense';
+		} else if ($scope.card_selected.position == 'defense') {
+			$scope.card_selected.position = 'attack';
+		}
+		change_switch_value($scope.card_selected);
+	}
+
+	$scope.target = function (card) {
+		if ($scope.action == 'attack') {
+			if ($scope.card_selected.attack >= card.def) {
+				$scope.tip = $scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack - card.defense) + " damages to your opponent.";
+				$scope.logs.push($scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack - card.defense) + " damages to your opponent.");
+				playCard($scope.enemy_monsters, $scope.enemy_graveyard, card, 'hidden');
+			} else {
+
+			}
+		}
 	}
 }
 
