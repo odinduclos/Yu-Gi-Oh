@@ -1,5 +1,6 @@
-function GameController ($scope) {
+'use_strict';
 
+function GameController ($scope) {
 	$scope.game = false;
 	$scope.logs = ['Waiting for the other player'];
 	$scope.game_turn = {turn: 0, my_turn: true};
@@ -14,13 +15,21 @@ function GameController ($scope) {
 		{_id: 5, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg"}
 	];
 	$scope.hand = [];
+	$scope.hand.target = 'enemy_hand';
 	$scope.enemy_hand = [];
+	$scope.enemy_hand.target = 'hand';
 	$scope.monsters = [];
+	$scope.monsters.target = 'enemy_monsters';
 	$scope.enemy_monsters = [];
+	$scope.enemy_monsters.target = 'monsters';
 	$scope.traps = [];
+	$scope.traps.target = 'enemy_traps';
 	$scope.enemy_traps = [];
+	$scope.enemy_traps.target = 'traps';
 	$scope.graveyard = [];
+	$scope.graveyard.target = 'enemy_graveyard';
 	$scope.enemy_graveyard = [];
+	$scope.enemy_graveyard.target = 'graveyard';
 	$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
 	$scope.focus = $scope.back;
 	$scope.card_selected = null;
@@ -35,7 +44,7 @@ function GameController ($scope) {
 	var socket = io.connect();
 
 	socket.on('startGame', function (data) {
-		console.log(data);
+		/*console.log(data);*/
 		$scope.$apply(function () {
 			$scope.tip = 'The game begin!';
 			$scope.logs.push('The game begin!');
@@ -49,7 +58,7 @@ function GameController ($scope) {
 	socket.on('endGame', function (data) {
 		$scope.$apply(function () {
 			if (data.error != 0) {
-				console.log(data.message);
+				/*console.log(data.message);*/
 				$scope.logs.push(data.message);
 			}
 			$scope.game = false;
@@ -66,16 +75,23 @@ function GameController ($scope) {
 	});
 
 	socket.on('play', function (data) {
-		$scope.logs.push('Ennemy play a card.');
+		/*console.log(data);*/
+		// a reprendre avec sources et destination
+		// $scope.logs.push('Ennemy play a card.');
 		$scope.$apply(function () {
-			console.log(data);
+			/*console.log(data.source);
+			console.log(data.destination);*/
+			/*console.log(eval("$scope." + data.source));
+			console.log(eval("$scope." + data.destination));*/
+			playCard(eval("$scope." + data.source), eval("$scope." + data.destination), data.card, data.state);
+			/*console.log(data);
 			if (data.card.from == 'hand') {
 				if (data.card.type == 'monster') {
 					playCard($scope.enemy_hand, $scope.enemy_monsters, data.card, data.state);
 				} else if (data.card.type == 'trap' || data.card.type == 'spell') {
 					playCard($scope.enemy_hand, $scope.enemy_traps, data.card, data.state);
 				}
-			}
+			}*/
 		});
 	});
 
@@ -111,10 +127,10 @@ function GameController ($scope) {
 		destination.push(card);
 		for (var i = 0; i < source.length; i++) {
 			if (source[i] == card) {
-				source.splice(i, 1);
-				socket.emit('play', {error: 0, card: card, state: state});
+				socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
 				$scope.tip = "Play: " + card.name + ' in ' + state + '.';
 				$scope.logs.push("Play: " + card.name + ' in ' + state + '.');
+				source.splice(i, 1);
 				return;
 			}
 		};
@@ -211,14 +227,31 @@ function GameController ($scope) {
 		change_switch_value($scope.card_selected);
 	}
 
+	function apply_fight (card, def) {
+		if ($scope.card_selected.attack > def) {
+			$scope.tip = $scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack - def) + " damages to your opponent.";
+			$scope.logs.push($scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack - def) + " damages to your opponent.");
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, card, 'hidden');
+			$scope.enemy_pv -= $scope.card_selected.attack - def;
+		} else if ($scope.card_selected.attack == def) {
+			$scope.tip = $scope.card_selected.name + " and " + card.name + " both destroyed.";
+			$scope.logs.push($scope.card_selected.name + " and " + card.name + " both destroyed.");
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, card, 'hidden');
+			playCard($scope.monsters, $scope.graveyard, card, 'hidden');
+		} else if ($scope.card_selected.attack < def) {
+			$scope.tip = card.name + " destroy " + $scope.card_selected.name + " and inflict " + (def - $scope.card_selected.attack) + " damages to you.";
+			$scope.logs.push(card.name + " destroy " + $scope.card_selected.name + " and inflict " + (def - $scope.card_selected.attack) + " damages to you.");
+			playCard($scope.monsters, $scope.graveyard, card, 'hidden');
+			$scope.enemy_pv -= def - $scope.card_selected.attack;
+		}
+	}
+
 	$scope.target = function (card) {
 		if ($scope.action == 'attack') {
-			if ($scope.card_selected.attack >= card.def) {
-				$scope.tip = $scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack - card.defense) + " damages to your opponent.";
-				$scope.logs.push($scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack - card.defense) + " damages to your opponent.");
-				playCard($scope.enemy_monsters, $scope.enemy_graveyard, card, 'hidden');
+			if (card.position == 'attack') {
+				apply_fight(card, card.attack);
 			} else {
-
+				apply_fight(card, card.def);
 			}
 		}
 	}
