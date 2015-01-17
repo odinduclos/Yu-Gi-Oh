@@ -5,7 +5,7 @@
 	</ul>
 </fieldset>
 <div id="desk" ng-if="game">
-	<div id="board" draggable>
+	<div id="board">
 		<fieldset class="game-fieldset ennemy-hand-fieldset">
 			<legend>Ennemy hand</legend>
 			<table id="places-ennemy-hand">
@@ -67,7 +67,7 @@
 				</tr>
 			</table>
 		</fieldset>
-		<fieldset class="game-fieldset" draggable>
+		<fieldset class="game-fieldset">
 			<legend>My hand</legend>
 			<table id="places-self-hand">
 				<tr>
@@ -103,11 +103,11 @@
 	<div id="menu" draggable>
 		<fieldset class="menu-fieldset">
 			<legend>Menu</legend>
-			<input type="submit" class="button" ng-if="card_selected && card_selected.from == 'board' && card_selected.type == 'monster'" ng-click="attack()" value="Attack">
-			<input type="submit" class="button" ng-if="card_selected && card_selected.from == 'board' && card_selected.state != 'hidden'" ng-click="switch_position()" value="{{switch_value}}">
-			<input type="submit" class="button" ng-if="card_selected && card_selected.from == 'hand'" ng-click="play('visible')" value="Visible">
-			<input type="submit" class="button" ng-if="card_selected && card_selected.from == 'hand' && card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
-			<input type="submit" class="button" ng-if="card_selected && card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
+			<input type="submit" class="button" ng-if="game_turn.turn != 0 && game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.type == 'monster' && !card_selected.attacked" ng-click="attack()" value="Attack">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.state != 'hidden'" ng-click="switch_position()" value="{{switch_value}}">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand'" ng-click="play('visible')" value="Visible">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand' && card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
 			<input ng-if="game_turn.my_turn" type="submit" id="end-turn" class="button alert" ng-click="end()" value="End turn">
 			<ul class="log-fieldset">
 				<li ng-repeat="log in logs | reverse track by $index ">{{ log }}</li>

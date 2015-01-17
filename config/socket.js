@@ -30,6 +30,7 @@ module.exports = function (socket) {
 			socket.to(user.room).emit('draw', data);
 	});
 	socket.on('play', function (data) {
+		console.log(data);
 		if (data.error == 0)
 			socket.to(user.room).emit('play', data);
 	});
