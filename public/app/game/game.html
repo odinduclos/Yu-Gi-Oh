@@ -34,7 +34,7 @@
 						<img ng-if="enemy_graveyard.length > 0" ng-src="{{ folder + back.img }}">
 					</td>
 					<td><p class="desk-description">Field card zone</p></td>
-					<td ng-repeat="card in enemy_monsters track by $index" ng-mouseover="describe_enemy(card)" ng-click="target(card)">
+					<td ng-repeat="card in enemy_monsters track by $index" ng-mouseover="describe_enemy(card)" ng-click="target(card, 'enemy_monsters')">
 						<p ng-if="card.state == 'visible' && card.position == 'attack'" class="desk-description">Attack</p>
 						<p ng-if="card.state == 'visible' && card.position == 'defense'" class="desk-description">Defense</p>
 						<p ng-if="card.state == 'hidden'" class="desk-description">Hidden</p>
@@ -48,7 +48,7 @@
 						<img ng-if="graveyard.length > 0" ng-src="{{ folder + back.img }}">
 					</td>
 					<td><p class="desk-description">Field card zone</p></td>
-					<td ng-repeat="card in monsters track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
+					<td ng-repeat="card in monsters track by $index" ng-mouseover="describe(card)" ng-click="choice_action(card, 'board', 'monsters')" ng-Class="{green: card == card_selected}">
 						<p ng-if="card.state == 'visible' && card.position == 'attack'" class="desk-description">Attak</p>
 						<p ng-if="card.state == 'visible' && card.position == 'defense'" class="desk-description">Defense</p>
 						<p ng-if="card.state == 'hidden'" class="desk-description">Hidden</p>
@@ -59,7 +59,7 @@
 				<tr>
 					<td><p class="desk-description">Deck zone ({{ deck.length }})</p><img ng-src="{{ folder + back.img }}"></td>
 					<td><p class="desk-description">Fusion deck zone</p></td>
-					<td ng-repeat="card in traps track by $index" ng-mouseover="describe(card)" ng-click="select('board', card)" ng-Class="{green: card == card_selected}">
+					<td ng-repeat="card in traps track by $index" ng-mouseover="describe(card)" ng-click="select(card, 'board')" ng-Class="{green: card == card_selected}">
 						<p class="desk-description">Spell & trap card zone</p>
 						<img ng-if="card.state == 'hidden'" ng-src="{{ folder + back.img }}">
 						<img ng-if="card.state == 'visible'" ng-src="{{ folder + card.img }}">
@@ -71,7 +71,7 @@
 			<legend>My hand</legend>
 			<table id="places-self-hand">
 				<tr>
-					<td ng-repeat="card in hand track by $index" ng-mouseover="describe(card)" ng-click="select('hand', card)" ng-Class="{green: card == card_selected}">
+					<td ng-repeat="card in hand track by $index" ng-mouseover="describe(card)" ng-click="select(card, 'hand')" ng-Class="{green: card == card_selected}">
 						<img ng-src="{{ folder + card.img }}">
 					</td>
 				</tr>
@@ -103,11 +103,12 @@
 	<div id="menu" draggable>
 		<fieldset class="menu-fieldset">
 			<legend>Menu</legend>
-			<input type="submit" class="button" ng-if="game_turn.turn != 0 && game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.type == 'monster' && !card_selected.attacked" ng-click="attack()" value="Attack">
-			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.state != 'hidden'" ng-click="switch_position()" value="{{switch_value}}">
-			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand'" ng-click="play('visible')" value="Visible">
-			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand' && card_selected.type == 'monster'" ng-click="play('defense')" value="Defense">
-			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand'" ng-click="play('hidden')" value="Hidden">
+			<input type="submit" class="button" ng-if="game_turn.turn != 0 && game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.type == 'monster' && !card_selected.attacked && !action" ng-click="attack()" value="Attack">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.state != 'hidden' && !action" ng-click="switch_position(card_selected)" value="{{switch_value}}">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && card_selected.from == 'board' && card_selected.state == 'hidden' && !action" ng-click="switch_state(card_selected)" value="Visible">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand' && !action" ng-click="play('visible')" value="Visible">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand' && card_selected.type == 'monster' && !action" ng-click="play('defense')" value="Defense">
+			<input type="submit" class="button" ng-if="game_turn.my_turn && card_selected && (!game_state.monster_played || card_selected.type != 'monster') && card_selected.from == 'hand'" ng-click="play('hidden') && !action" value="Hidden">
 			<input ng-if="game_turn.my_turn" type="submit" id="end-turn" class="button alert" ng-click="end()" value="End turn">
 			<ul class="log-fieldset">
 				<li ng-repeat="log in logs | reverse track by $index ">{{ log }}</li>

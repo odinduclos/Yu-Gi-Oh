@@ -13,12 +13,15 @@ function GameController ($scope) {
 	$scope.folder = "img/cards/";
 	// simulation de BDD
 	$scope.deck = [
-		{_id: 1, star: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
-		{_id: 2, star: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
-		{_id: 3, star: 8, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-		{_id: 4, star: 4, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
-		{_id: 5, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
-		{_id: 5, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg"}
+		{_id: 1, stars: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
+		{_id: 2, stars: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
+		{_id: 3, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+		{_id: 4, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+		{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+		{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+		{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
+		{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
+		{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg"}
 	];
 	// main du joueur
 	$scope.hand = [];
@@ -59,7 +62,9 @@ function GameController ($scope) {
 	// valeur du bouton de changement de position d'une carte
 	$scope.switch_value = 'switch';
 	// action courante
-	$scope.action = '';
+	$scope.action = false;
+	// nombre de target restantes
+	$scope.targets = 0;
 
 	// fonctions sockets (répercute les actions de l'opposant)
 	var socket = io.connect();
@@ -139,6 +144,9 @@ function GameController ($scope) {
 		if (emit)
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
 		card.state = state;
+		if (state == 'hidden') {
+			card.position = 'defense';
+		}
 		destination.push(card);
 		for (var i = 0; i < source.length; i++) {
 			// /!\ Point critique: la comparaison par instance ne fonctionne pas. Penser à mettre un id unique à chaque carte.
@@ -191,6 +199,16 @@ function GameController ($scope) {
 					$scope.logs.push("You already have played a monster.");
 					return;
 				}
+				if ($scope.card_selected.stars >= 5) {
+					$scope.card_selected.state = state;
+					$scope.targets = 1;
+					if ($scope.card_selected.stars >= 7)
+						$scope.targets++;
+					$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
+					$scope.logs.push("Select " + $scope.targets + " monster to sacrifice.");
+					$scope.action = 'sacrifice';
+					return;
+				}
 				$scope.game_state.monster_played = true;
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, state, true);
 			} else if ($scope.card_selected.type == 'trap' || $scope.card_selected.type == 'spell') {
@@ -232,7 +250,8 @@ function GameController ($scope) {
 	}
 
 	// selectionne une carte
-	$scope.select = function (from, card) {
+	$scope.select = function (card, from) {
+		$scope.action = false;
 		$scope.card_selected = card;
 		$scope.card_selected.from = from;
 		change_switch_value($scope.card_selected);
@@ -240,6 +259,11 @@ function GameController ($scope) {
 
 	// la carte selectionnée attaque
 	$scope.attack = function () {
+		if ($scope.card_selected.position != 'attack') {
+			$scope.tip = 'In order to attack, your monster should be in attack position.';
+			$scope.logs.push('In order to attack, your monster should be in attack position.');
+			return;
+		}
 		if ($scope.enemy_monsters.length == 0) {
 			$scope.tip = $scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.";
 			$scope.logs.push($scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.");
@@ -252,13 +276,26 @@ function GameController ($scope) {
 	}
 
 	// la carte selectionnée change de position
-	$scope.switch_position = function () {
-		if ($scope.card_selected.position == 'attack') {
-			$scope.card_selected.position = 'defense';
-		} else if ($scope.card_selected.position == 'defense') {
-			$scope.card_selected.position = 'attack';
+	$scope.switch_position = function (card) {
+		if (card.attacked) {
+			$scope.tip = 'Your monster can not switch after attacking.';
+			$scope.logs.push('Your monster can not switch after attacking.');
+			return;
 		}
-		change_switch_value($scope.card_selected);
+		if (card.position == 'attack') {
+			card.position = 'defense';
+		} else if (card.position == 'defense') {
+			card.position = 'attack';
+		}
+		change_switch_value(card);
+	}
+
+	$scope.switch_state = function (card) {
+		if (card.state == 'visible') {
+			card.state == 'hidden';
+		} else {
+			card.state == 'visible';
+		}
 	}
 
 	// applique les effets du combat aux cartes
@@ -284,16 +321,39 @@ function GameController ($scope) {
 		}
 	}
 
+	// choix de l'action à faire en fonction de l'état de la variable action lor du click sur une carte
+	$scope.choice_action = function (card, from, stack) {
+		console.log($scope.action);
+		if (!$scope.action) {
+			$scope.select(card, from);
+		} else {
+			$scope.target(card, stack);
+		}
+	}
+
 	// le joueur selectionne une cible pour son monstre
-	$scope.target = function (card) {
-		if ($scope.action == 'attack') {
+	$scope.target = function (card, from) {
+		console.log($scope.action);
+		if ($scope.action == 'attack' && from == 'enemy_monsters') {
 			if (card.position == 'attack') {
 				apply_fight(card, card.attack_tmp);
 			} else {
 				apply_fight(card, card.def_tmp);
 			}
+			$scope.action = false;
+			return;
 		}
-		$scope.action = false;
+		if ($scope.action == 'sacrifice' && from == 'monsters') {
+			playCard($scope.monsters, $scope.graveyard, card, 'hidden', true);
+			$scope.targets--;
+			if ($scope.targets == 0) {
+				playCard($scope.hand, $scope.monsters, $scope.card_selected, $scope.card_selected.state, true);
+				$scope.action = false;
+				return;
+			}
+			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
+			$scope.logs.push("Select " + $scope.targets + " monster to sacrifice.");
+		}
 	}
 }
 
