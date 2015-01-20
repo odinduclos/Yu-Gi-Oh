@@ -21,7 +21,7 @@ function GameController ($scope) {
 		{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 		{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
 		{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
-		{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg"}
+		{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
 	];
 	// main du joueur
 	$scope.hand = [];
@@ -212,6 +212,7 @@ function GameController ($scope) {
 				$scope.game_state.monster_played = true;
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, state, true);
 			} else if ($scope.card_selected.type == 'trap' || $scope.card_selected.type == 'spell') {
+				playSpell($scope.card_selected);
 				playCard($scope.hand, $scope.traps, $scope.card_selected, state, true);
 			}
 		}
@@ -230,12 +231,13 @@ function GameController ($scope) {
 	}
 
 	// le joueur joue un sort
-	$scope.playSpell = function (card) {
-		// LUIGIIIIIIIIIIIIIIIIIIIIIIIIIII
-		card.state = 'visible';
+	function playSpell (card) {
 		// call the rigth function
 		// si tu veux transférer une carte d'une pile à une autre, utilise la fonction playCard
 		// seules les valeurs de attack_tmp et def_tmp doivent être modifiées
+		card.state = 'visible';
+		console.log(card);
+		eval(card.effect + "()");
 	}
 
 	// change l'état du bouton de changement de position de la carte
@@ -353,6 +355,44 @@ function GameController ($scope) {
 			}
 			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
 			$scope.logs.push("Select " + $scope.targets + " monster to sacrifice.");
+		}
+	}
+
+	function getFirstVisibleEnemyMonster() {
+		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
+			if ($scope.enemy_monsters[i].state == 'visible') {
+				return $scope.enemy_monsters[i];
+			}
+		}
+	}
+
+	function doFissure() {
+		var weakestMonster = getFirstVisibleEnemyMonster();
+		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
+			if (weakestMonster.attack > $scope.enemy_monsters[i].attack &&
+				$scope.enemy_monsters[i].state == 'visible') {
+				weakestMonster = $scope.enemy_monsters[i];
+			}
+		}
+		playCard($scope.enemy_monsters, $scope.enemy_graveyard, weakestMonster, 'hidden', true);
+	}
+
+	function destroyMonsters(monster, index, monsterBoard) {
+		playCard(monsterBoard, $scope.enemy_graveyard, monster, 'hidden', true);
+	}
+
+	function destroyAllMonsters() {
+		$scope.enemy_monsters.forEach(destroyMonsters);
+		$scope.monsters.forEach(destroyMonsters);
+	}
+
+	function destroyActiveTrap() {
+		var found = false;
+		for (var i = 0; !found && i < $scope.enemy_traps.length; i++) {
+			if ($scope.enemy_traps[i].state == 'visible') {
+				found = true;
+				playCard($scope.enemy_traps, $scope.enemy_graveyard, $scope.enemy_traps[i], 'hidden', true);
+			}
 		}
 	}
 }
