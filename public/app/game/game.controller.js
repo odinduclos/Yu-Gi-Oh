@@ -25,7 +25,7 @@ function GameController ($scope) {
 			{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
-			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: ""},
+			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
 		];
 		// main du joueur
@@ -308,9 +308,9 @@ function GameController ($scope) {
 
 	function check_for_traps(param) {
 		// verifie les traps ciblant les cartes ennemies
-		for (var i = 0; i < traps.length; i++) {
-			if (traps[i].type == 'trap') {
-				eval(traps[i].effect + "(" + param + ")");
+		for (var i = 0; i < $scope.traps.length; i++) {
+			if ($scope.traps[i].type == 'trap') {
+				eval($scope.traps[i].effect + "(" + param + ")");
 			}
 		};
 	}
@@ -495,6 +495,14 @@ function GameController ($scope) {
 			}
 		}
 	}
+
+	function doTrapHole(param) {
+		var lastMonsterNb = $scope.enemy_monsters.length - 1;
+		if (param == 'play_monster' && $scope.enemy_monsters[lastMonsterNb].attack <= 1000) {
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[lastMonsterNb], 'hidden', true);
+		}
+	}
+
 }
 
 
