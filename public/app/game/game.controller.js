@@ -66,6 +66,13 @@ function GameController ($scope) {
 	// nombre de target restantes
 	$scope.targets = 0;
 
+	$scope.attack_button = false;
+	$scope.switch_button = false;
+	$scope.visible_button = false;
+	$scope.play_visible_button = false;
+	$scope.play_defense_button = false;
+	$scope.play_hidden_button = false;
+
 	// fonctions sockets (répercute les actions de l'opposant)
 	var socket = io.connect();
 
@@ -103,7 +110,6 @@ function GameController ($scope) {
 
 	// notifié que l'opposant à bougé une carte d'une stack à une autre
 	socket.on('play', function (data) {
-		console.log(data);
 		$scope.$apply(function () {
 			playCard(eval("$scope." + data.source), eval("$scope." + data.destination), data.card, data.state, false);
 		});
@@ -155,6 +161,7 @@ function GameController ($scope) {
 				$scope.logs.push("Play: " + card.name + ' in ' + state + '.');
 				if (source[i]._id === $scope.card_selected._id) {
 					$scope.card_selected = false;
+					hide_buttons();
 				}
 				source.splice(i, 1);
 				return;
@@ -228,6 +235,7 @@ function GameController ($scope) {
 		for (var i = 0; i < $scope.monsters.length; i++) {
 			$scope.monsters[i].attacked = false;
 		};
+		hide_buttons();
 	}
 
 	// le joueur joue un sort
@@ -236,7 +244,6 @@ function GameController ($scope) {
 		// si tu veux transférer une carte d'une pile à une autre, utilise la fonction playCard
 		// seules les valeurs de attack_tmp et def_tmp doivent être modifiées
 		card.state = 'visible';
-		console.log(card);
 		eval(card.effect + "()");
 	}
 
@@ -251,12 +258,45 @@ function GameController ($scope) {
 		}
 	}
 
+	function show_buttons(card) {
+		if ($scope.game_turn.my_turn && $scope.card_selected && !$scope.action) {
+			if ($scope.card_selected.from == 'board') {
+				if ($scope.game_turn.turn != 0 && $scope.card_selected.type == 'monster' && !$scope.card_selected.attacked) {
+					$scope.attack_button = true;
+				}
+				if ($scope.card_selected.state != 'hidden') {
+					$scope.switch_button = true;
+				}
+				if ($scope.card_selected.state == 'hidden') {
+					$scope.visible_button = true;
+				}
+			}
+			if ($scope.card_selected.from == 'hand' && (!$scope.game_state.monster_played || $scope.card_selected.type != 'monster')) {
+				$scope.play_hidden_button = true;
+				$scope.play_visible_button = true;
+				if ($scope.card_selected.type == 'monster') {
+					$scope.play_defense_button = true;
+				}
+			}
+		}
+	}
+
+	function hide_buttons(end) {
+		$scope.attack_button = false;
+		$scope.switch_button = false;
+		$scope.visible_button = false;
+		$scope.play_visible_button = false;
+		$scope.play_defense_button = false;
+		$scope.play_hidden_button = false;
+	}
+
 	// selectionne une carte
 	$scope.select = function (card, from) {
 		$scope.action = false;
 		$scope.card_selected = card;
 		$scope.card_selected.from = from;
 		change_switch_value($scope.card_selected);
+		show_buttons(card);
 	}
 
 	// la carte selectionnée attaque
@@ -316,8 +356,6 @@ function GameController ($scope) {
 		} else if ($scope.card_selected.attack_tmp < def) {
 			$scope.tip = card.name + " destroy " + $scope.card_selected.name + " and inflict " + (def - $scope.card_selected.attack_tmp) + " damages to you.";
 			$scope.logs.push(card.name + " destroy " + $scope.card_selected.name + " and inflict " + (def - $scope.card_selected.attack_tmp) + " damages to you.");
-			console.log($scope.monsters);
-			console.log($scope.graveyard);
 			playCard($scope.monsters, $scope.graveyard, $scope.card_selected, 'hidden', true);
 			$scope.enemy_pv -= def - $scope.card_selected.attack_tmp;
 		}
@@ -325,7 +363,6 @@ function GameController ($scope) {
 
 	// choix de l'action à faire en fonction de l'état de la variable action lor du click sur une carte
 	$scope.choice_action = function (card, from, stack) {
-		console.log($scope.action);
 		if (!$scope.action) {
 			$scope.select(card, from);
 		} else {
@@ -335,7 +372,6 @@ function GameController ($scope) {
 
 	// le joueur selectionne une cible pour son monstre
 	$scope.target = function (card, from) {
-		console.log($scope.action);
 		if ($scope.action == 'attack' && from == 'enemy_monsters') {
 			if (card.position == 'attack') {
 				apply_fight(card, card.attack_tmp);
