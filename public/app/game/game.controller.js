@@ -26,7 +26,11 @@ function GameController ($scope) {
 			{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
 			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
+			{_id: 9, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
+			{_id: 10, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
+			{_id: 11, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
+			{_id: 12, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
 		];
 		// main du joueur
 		$scope.hand = [];
@@ -76,8 +80,8 @@ function GameController ($scope) {
 		$scope.targets_choice = [];
 		$scope.validate_target = false;
 
-		$scope.target_choice = $scope.deck[0];
-		$scope.targets_choice = $scope.deck;
+/*		$scope.target_choice = $scope.deck[0];
+		$scope.targets_choice = $scope.deck;*/
 
 		$scope.attack_button = false;
 		$scope.switch_button = false;
@@ -85,7 +89,6 @@ function GameController ($scope) {
 		$scope.play_visible_button = false;
 		$scope.play_defense_button = false;
 		$scope.play_hidden_button = false;
-		console.log("init vars");
 	}
 
 	init_vars();
@@ -162,20 +165,21 @@ function GameController ($scope) {
 
 	// bouge une carte d'une stack à une autre
 	function playCard (source, destination, card, state, emit) {
-		if (emit)
-			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
-		if (destination.target == 'enemy_monsters') {
-			check_for_traps('play_monster');
-		} else if (destination.target == 'enemy_traps' && card.type == 'trap') {
-			check_for_traps('play_trap');
-		} else if (destination.target == 'enemy_spells' && card.type == 'spell') {
-			check_for_traps('play_spell');
-		}
 		card.state = state;
 		if (state == 'hidden') {
 			card.position = 'defense';
 		}
 		destination.push(card);
+		if (emit) {
+			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
+			if (destination.target == 'enemy_monsters') {
+				check_for_traps('play_monster');
+			} else if (destination.target == 'enemy_traps' && card.type == 'trap') {
+				check_for_traps('play_trap');
+			} else if (destination.target == 'enemy_spells' && card.type == 'spell') {
+				check_for_traps('play_spell');
+			}
+		}
 		for (var i = 0; i < source.length; i++) {
 			// /!\ Point critique: la comparaison par instance ne fonctionne pas. Penser à mettre un id unique à chaque carte.
 			if (source[i]._id === card._id) {
@@ -241,7 +245,7 @@ function GameController ($scope) {
 				$scope.game_state.monster_played = true;
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, state, true);
 			} else if ($scope.card_selected.type == 'trap' || $scope.card_selected.type == 'spell') {
-				playSpell($scope.card_selected);
+				//playSpell($scope.card_selected);
 				playCard($scope.hand, $scope.traps, $scope.card_selected, state, true);
 			}
 		}
@@ -261,13 +265,13 @@ function GameController ($scope) {
 	}
 
 	// le joueur joue un sort
-	function playSpell (card) {
+/*	function playSpell (card) {
 		// call the rigth function
 		// si tu veux transférer une carte d'une pile à une autre, utilise la fonction playCard
 		// seules les valeurs de attack_tmp et def_tmp doivent être modifiées
 		card.state = 'visible';
 		eval(card.effect + "()");
-	}
+	}*/
 
 	// change l'état du bouton de changement de position de la carte
 	function change_switch_value (card) {
@@ -308,9 +312,19 @@ function GameController ($scope) {
 
 	function check_for_traps(param) {
 		// verifie les traps ciblant les cartes ennemies
+		console.log(param);
+		console.log($scope.traps);
+		console.log($scope.enemy_traps);
 		for (var i = 0; i < $scope.traps.length; i++) {
+			console.log($scope.traps[i]);
 			if ($scope.traps[i].type == 'trap') {
-				eval($scope.traps[i].effect + "(" + param + ")");
+				console.log($scope.traps[i].effect);
+				eval($scope.traps[i].effect + "('" + param + "')");
+			}
+		};
+		for (var i = 0; i < $scope.enemy_traps.length; i++) {
+			if ($scope.enemy_traps[i].type == 'trap') {
+				eval($scope.enemy_traps[i].effect + "('" + param + "')");
 			}
 		};
 	}
@@ -354,7 +368,6 @@ function GameController ($scope) {
 
 	// la carte selectionnée change de position
 	$scope.switch_position = function (card) {
-		check_for_traps('position');
 		if (card.attacked) {
 			$scope.tip = 'Your monster can not switch after attacking.';
 			$scope.logs.push('Your monster can not switch after attacking.');
@@ -415,7 +428,6 @@ function GameController ($scope) {
 				apply_fight(card, card.def_tmp);
 			}
 			$scope.action = false;
-			check_for_traps('attack');
 			return;
 		}
 		if ($scope.action == 'sacrifice' && from == 'monsters') {
@@ -424,7 +436,6 @@ function GameController ($scope) {
 			if ($scope.targets == 0) {
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, $scope.card_selected.state, true);
 				$scope.action = false;
-				check_for_traps('sacrifice');
 				return;
 			}
 			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
@@ -497,9 +508,12 @@ function GameController ($scope) {
 	}
 
 	function doTrapHole(param) {
-		var lastMonsterNb = $scope.enemy_monsters.length - 1;
-		if (param == 'play_monster' && $scope.enemy_monsters[lastMonsterNb].attack <= 1000) {
-			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[lastMonsterNb], 'hidden', true);
+		var lastMonsterNb = $scope.monsters.length - 1;
+		console.log($scope.monsters);
+		console.log(lastMonsterNb);
+		console.log($scope.monsters[lastMonsterNb]);
+		if (param == 'play_monster' && $scope.monsters[lastMonsterNb].attack >= 1000) {
+			playCard($scope.monsters, $scope.enemy_graveyard, $scope.monsters[lastMonsterNb], 'hidden', true);
 		}
 	}
 
