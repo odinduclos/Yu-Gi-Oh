@@ -1,80 +1,86 @@
 'use_strict';
 
 function GameController ($scope) {
-	// indique le début de la partie
-	$scope.game = false;
-	// tableaux des logs
-	$scope.logs = ['Waiting for the other player'];
-	// recap de la partie. +1 turn à chaque fois qu'un player joue
-	$scope.game_turn = {turn: 0, my_turn: true};
-	// limiteur de jeu: monstres joués
-	$scope.game_state = {monster_played: false};
-	// folder des cartes
-	$scope.folder = "img/cards/";
-	// simulation de BDD
-	$scope.deck = [
-		{_id: 1, stars: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
-		{_id: 2, stars: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
-		{_id: 3, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-		{_id: 4, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-		{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-		{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-		{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
-		{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
-		{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
-	];
-	// main du joueur
-	$scope.hand = [];
-	$scope.hand.target = 'enemy_hand';
-	// main de son opposant
-	$scope.enemy_hand = [];
-	$scope.enemy_hand.target = 'hand';
-	// board de monstres
-	$scope.monsters = [];
-	$scope.monsters.target = 'enemy_monsters';
-	// board de monstres ennemi
-	$scope.enemy_monsters = [];
-	$scope.enemy_monsters.target = 'monsters';
-	// board de traps et de spells
-	$scope.traps = [];
-	$scope.traps.target = 'enemy_traps';
-	// board de traps et de spells ennemi
-	$scope.enemy_traps = [];
-	$scope.enemy_traps.target = 'traps';
-	// cimetière
-	$scope.graveyard = [];
-	$scope.graveyard.target = 'enemy_graveyard';
-	// cimetière de l'ennemi
-	$scope.enemy_graveyard = [];
-	$scope.enemy_graveyard.target = 'graveyard';
-	// carte par défaut ou dos de carte
-	$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
-	// image apparaissant dans l'encadré de description
-	$scope.focus = $scope.back;
-	// image courante du joueur
-	$scope.card_selected = null;
-	$scope.pv = 3000;
-	$scope.name = 'Dino';
-	$scope.enemy_pv = 3000;
-	$scope.enemy_name = 'Julien';
-	// texte apparaissant dans l'encadré de tips
-	$scope.tip = 'Your turn';
-	// valeur du bouton de changement de position d'une carte
-	$scope.switch_value = 'switch';
-	// action courante
-	$scope.action = false;
-	// nombre de target restantes
-	$scope.targets = 0;
-
-	$scope.attack_button = false;
-	$scope.switch_button = false;
-	$scope.visible_button = false;
-	$scope.play_visible_button = false;
-	$scope.play_defense_button = false;
-	$scope.play_hidden_button = false;
 
 	// fonctions sockets (répercute les actions de l'opposant)
 	var socket = io.connect();
+
+	function init_vars() {
+		// indique le début de la partie
+		$scope.game = false;
+		// tableaux des logs
+		$scope.logs = ['Waiting for the other player'];
+		// recap de la partie. +1 turn à chaque fois qu'un player joue
+		$scope.game_turn = {turn: 0, my_turn: true};
+		// limiteur de jeu: monstres joués
+		$scope.game_state = {monster_played: false};
+		// folder des cartes
+		$scope.folder = "img/cards/";
+		// simulation de BDD
+		$scope.deck = [
+			{_id: 1, stars: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
+			{_id: 2, stars: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
+			{_id: 3, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+			{_id: 4, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+			{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+			{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
+			{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
+			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
+			{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
+		];
+		// main du joueur
+		$scope.hand = [];
+		$scope.hand.target = 'enemy_hand';
+		// main de son opposant
+		$scope.enemy_hand = [];
+		$scope.enemy_hand.target = 'hand';
+		// board de monstres
+		$scope.monsters = [];
+		$scope.monsters.target = 'enemy_monsters';
+		// board de monstres ennemi
+		$scope.enemy_monsters = [];
+		$scope.enemy_monsters.target = 'monsters';
+		// board de traps et de spells
+		$scope.traps = [];
+		$scope.traps.target = 'enemy_traps';
+		// board de traps et de spells ennemi
+		$scope.enemy_traps = [];
+		$scope.enemy_traps.target = 'traps';
+		// cimetière
+		$scope.graveyard = [];
+		$scope.graveyard.target = 'enemy_graveyard';
+		// cimetière de l'ennemi
+		$scope.enemy_graveyard = [];
+		$scope.enemy_graveyard.target = 'graveyard';
+		// carte par défaut ou dos de carte
+		$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
+		// image apparaissant dans l'encadré de description
+		$scope.focus = $scope.back;
+		// image courante du joueur
+		$scope.card_selected = null;
+		$scope.pv = 3000;
+		$scope.name = 'Dino';
+		$scope.enemy_pv = 3000;
+		$scope.enemy_name = 'Julien';
+		// texte apparaissant dans l'encadré de tips
+		$scope.tip = 'Your turn';
+		// valeur du bouton de changement de position d'une carte
+		$scope.switch_value = 'switch';
+		// action courante
+		$scope.action = false;
+		// nombre de target restantes
+		$scope.targets = 0;
+
+		$scope.attack_button = false;
+		$scope.switch_button = false;
+		$scope.visible_button = false;
+		$scope.play_visible_button = false;
+		$scope.play_defense_button = false;
+		$scope.play_hidden_button = false;
+		console.log("init vars");
+	}
+
+	init_vars();
 
 	// notifié que la partie commence
 	socket.on('startGame', function (data) {
@@ -97,6 +103,7 @@ function GameController ($scope) {
 			$scope.game = false;
 			$scope.tip = 'The game end!';
 			$scope.logs.push('The game end!');
+			init_vars();
 		});
 	});
 

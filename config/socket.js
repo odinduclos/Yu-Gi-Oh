@@ -39,9 +39,9 @@ module.exports = function (socket) {
 			socket.to(user.room).emit('end_turn', data);
 	});
 	socket.on('disconnect', function () {
+		socket.to(user.room).emit('endGame', {error: 31, message: 'Your opponent has left'});
 		user.connected = false;
 		user.room = false;
 		other.room = false;
-		socket.to(user.room).emit('endGame', {error: 31, message: 'Your opponent has left'});
 	});
 }
