@@ -71,6 +71,11 @@ function GameController ($scope) {
 		// nombre de target restantes
 		$scope.targets = 0;
 
+		// choix d'une target
+		$scope.target_choice = false;
+		$scope.targets_choice = [];
+		$scope.validate_target = false;
+
 		$scope.attack_button = false;
 		$scope.switch_button = false;
 		$scope.visible_button = false;
@@ -286,6 +291,9 @@ function GameController ($scope) {
 				}
 			}
 		}
+		if ($scope.target_choice) {
+			$scope.validate_target = true;
+		}
 	}
 
 	function hide_buttons(end) {
@@ -295,6 +303,7 @@ function GameController ($scope) {
 		$scope.play_visible_button = false;
 		$scope.play_defense_button = false;
 		$scope.play_hidden_button = false;
+		$scope.validate_target = false;
 	}
 
 	// selectionne une carte
@@ -399,6 +408,28 @@ function GameController ($scope) {
 			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
 			$scope.logs.push("Select " + $scope.targets + " monster to sacrifice.");
 		}
+	}
+
+	$scope.next_target = function (card) {
+		for (var i = 0; i < $scope.targets_choice.length; i++) {
+			if ($scope.targets_choice[i]._id == card._id && i < $scope.targets_choice.length - 1) {
+				$scope.target_choice = $scope.targets_choice[++i];
+				return;
+			}
+		};
+	}
+
+	$scope.previous_target = function (card) {
+		for (var i = $scope.targets_choice.length - 1; i >= 0; i--) {
+			if ($scope.targets_choice[i]._id == card._id && i > 0) {
+				$scope.target_choice = $scope.targets_choice[--i];
+				return;
+			}
+		};
+	}
+
+	$scope.validate = function () {
+		// ici pour la validation de la carte target_choice
 	}
 
 	function getFirstVisibleEnemyMonster() {

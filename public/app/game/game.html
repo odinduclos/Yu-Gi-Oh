@@ -97,12 +97,17 @@
 	<div id="description_card" draggable>
 		<fieldset class="description-fieldset">
 			<legend>Description</legend>
-			<img id="focus-img" src="{{ folder + focus.img }}" alt="description">
+			<img ng-if="!target_choice" id="focus-img" src="{{ folder + focus.img }}" alt="description">
+			<img ng-if="target_choice" id="focus-img" src="{{ folder + target_choice.img }}" alt="description">
+			<div ng-if="target_choice" id="previous" ng-click="previous_target(target_choice)">Previous</div>
+			<div ng-if="target_choice" id="tip">Choose a target</div>
+			<div ng-if="target_choice" id="next" ng-click="next_target(target_choice)">Next</div>
 		</fieldset>
 	</div>
 	<div id="menu" draggable>
 		<fieldset class="menu-fieldset">
 			<legend>Menu</legend>
+			<input type="submit" class="button" ng-if="validate_target" ng-click="validate()" value="Choose">
 			<input type="submit" class="button" ng-if="attack_button" ng-click="attack()" value="Attack">
 			<input type="submit" class="button" ng-if="switch_button" ng-click="switch_position(card_selected)" value="{{switch_value}}">
 			<input type="submit" class="button" ng-if="visible_button" ng-click="switch_state(card_selected)" value="Visible">
