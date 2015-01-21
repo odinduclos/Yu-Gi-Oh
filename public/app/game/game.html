@@ -99,9 +99,8 @@
 			<legend>Description</legend>
 			<img ng-if="!target_choice" id="focus-img" src="{{ folder + focus.img }}" alt="description">
 			<img ng-if="target_choice" id="focus-img" src="{{ folder + target_choice.img }}" alt="description">
-			<div ng-if="target_choice" id="previous" ng-click="previous_target(target_choice)">Previous</div>
-			<div ng-if="target_choice" id="tip">Choose a target</div>
-			<div ng-if="target_choice" id="next" ng-click="next_target(target_choice)">Next</div>
+			<div ng-if="target_choice" id="previous" ng-click="previous_target(target_choice)">&lt;&lt; Previous</div>
+			<div ng-if="target_choice" id="next" ng-click="next_target(target_choice)">Next &gt;&gt;</div>
 		</fieldset>
 	</div>
 	<div id="menu" draggable>

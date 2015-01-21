@@ -56,6 +56,18 @@ body {
 	z-index: 1;
 }
 
+#previous {
+	float: left;
+	background-color: white;
+	cursor: pointer;
+}
+
+#next {
+	float: right;
+	background-color: white;
+	cursor: pointer;
+}
+
 .desk-description {
 	position: relative;
 	color: white;

@@ -76,6 +76,9 @@ function GameController ($scope) {
 		$scope.targets_choice = [];
 		$scope.validate_target = false;
 
+		$scope.target_choice = $scope.deck[0];
+		$scope.targets_choice = $scope.deck;
+
 		$scope.attack_button = false;
 		$scope.switch_button = false;
 		$scope.visible_button = false;
