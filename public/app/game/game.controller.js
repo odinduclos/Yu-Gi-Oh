@@ -164,7 +164,13 @@ function GameController ($scope) {
 	function playCard (source, destination, card, state, emit) {
 		if (emit)
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
-		check_for_traps();
+		if (destination.target == 'enemy_monsters') {
+			check_for_traps('play_monster');
+		} else if (destination.target == 'enemy_traps' && card.type == 'trap') {
+			check_for_traps('play_trap');
+		} else if (destination.target == 'enemy_spells' && card.type == 'spell') {
+			check_for_traps('play_spell');
+		}
 		card.state = state;
 		if (state == 'hidden') {
 			card.position = 'defense';
@@ -300,11 +306,11 @@ function GameController ($scope) {
 		}
 	}
 
-	function check_for_traps() {
+	function check_for_traps(param) {
 		// verifie les traps ciblant les cartes ennemies
 		for (var i = 0; i < traps.length; i++) {
 			if (traps[i].type == 'trap') {
-				eval(traps[i].effect + "()");
+				eval(traps[i].effect + "(" + param + ")");
 			}
 		};
 	}
@@ -348,7 +354,7 @@ function GameController ($scope) {
 
 	// la carte selectionnée change de position
 	$scope.switch_position = function (card) {
-		check_for_traps();
+		check_for_traps('position');
 		if (card.attacked) {
 			$scope.tip = 'Your monster can not switch after attacking.';
 			$scope.logs.push('Your monster can not switch after attacking.');
@@ -402,7 +408,6 @@ function GameController ($scope) {
 
 	// le joueur selectionne une cible pour son monstre
 	$scope.target = function (card, from) {
-		check_for_traps();
 		if ($scope.action == 'attack' && from == 'enemy_monsters') {
 			if (card.position == 'attack') {
 				apply_fight(card, card.attack_tmp);
@@ -410,6 +415,7 @@ function GameController ($scope) {
 				apply_fight(card, card.def_tmp);
 			}
 			$scope.action = false;
+			check_for_traps('attack');
 			return;
 		}
 		if ($scope.action == 'sacrifice' && from == 'monsters') {
@@ -418,6 +424,7 @@ function GameController ($scope) {
 			if ($scope.targets == 0) {
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, $scope.card_selected.state, true);
 				$scope.action = false;
+				check_for_traps('sacrifice');
 				return;
 			}
 			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
@@ -444,8 +451,6 @@ function GameController ($scope) {
 	}
 
 	$scope.validate = function () {
-		check_for_traps();
-
 		// ici pour la validation de la carte target_choice
 
 		$scope.target_choice = false;
