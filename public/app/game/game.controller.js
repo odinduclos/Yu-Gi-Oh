@@ -25,7 +25,7 @@ function GameController ($scope) {
 			{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
-			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg"},
+			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: ""},
 			{_id: 9, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
 		];
 		// main du joueur
@@ -164,6 +164,7 @@ function GameController ($scope) {
 	function playCard (source, destination, card, state, emit) {
 		if (emit)
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
+		check_for_traps(card);
 		card.state = state;
 		if (state == 'hidden') {
 			card.position = 'defense';
@@ -297,6 +298,10 @@ function GameController ($scope) {
 		if ($scope.target_choice) {
 			$scope.validate_target = true;
 		}
+	}
+
+	function check_for_traps(card) {
+		// verifie les traps ciblant les cartes ennemies
 	}
 
 	function hide_buttons(end) {
