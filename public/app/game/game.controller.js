@@ -164,7 +164,7 @@ function GameController ($scope) {
 	function playCard (source, destination, card, state, emit) {
 		if (emit)
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
-		check_for_traps(card);
+		check_for_traps();
 		card.state = state;
 		if (state == 'hidden') {
 			card.position = 'defense';
@@ -300,8 +300,13 @@ function GameController ($scope) {
 		}
 	}
 
-	function check_for_traps(card) {
+	function check_for_traps() {
 		// verifie les traps ciblant les cartes ennemies
+		for (var i = 0; i < traps.length; i++) {
+			if (traps[i].type == 'trap') {
+				eval(traps[i].effect + "()");
+			}
+		};
 	}
 
 	function hide_buttons(end) {
@@ -343,6 +348,7 @@ function GameController ($scope) {
 
 	// la carte selectionnée change de position
 	$scope.switch_position = function (card) {
+		check_for_traps();
 		if (card.attacked) {
 			$scope.tip = 'Your monster can not switch after attacking.';
 			$scope.logs.push('Your monster can not switch after attacking.');
@@ -396,6 +402,7 @@ function GameController ($scope) {
 
 	// le joueur selectionne une cible pour son monstre
 	$scope.target = function (card, from) {
+		check_for_traps();
 		if ($scope.action == 'attack' && from == 'enemy_monsters') {
 			if (card.position == 'attack') {
 				apply_fight(card, card.attack_tmp);
@@ -437,7 +444,13 @@ function GameController ($scope) {
 	}
 
 	$scope.validate = function () {
+		check_for_traps();
+
 		// ici pour la validation de la carte target_choice
+
+		$scope.target_choice = false;
+		$scope.targets_choice = [];
+		$scope.validate_target = false;
 	}
 
 	function getFirstVisibleEnemyMonster() {
