@@ -25,13 +25,13 @@ function GameController ($scope) {
 			{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
 			{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
-			{_id: 8, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 9, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 10, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 11, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 12, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"},
 			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
-		];
+	];
 		// main du joueur
 		$scope.hand = [];
 		$scope.hand.target = 'enemy_hand';
@@ -244,8 +244,9 @@ function GameController ($scope) {
 				}
 				$scope.game_state.monster_played = true;
 				playCard($scope.hand, $scope.monsters, $scope.card_selected, state, true);
-			} else if ($scope.card_selected.type == 'trap' || $scope.card_selected.type == 'spell') {
-				//playSpell($scope.card_selected);
+			} else if ($scope.card_selected.type == 'spell') {
+				playSpell($scope.card_selected, state);
+			} else {
 				playCard($scope.hand, $scope.traps, $scope.card_selected, state, true);
 			}
 		}
@@ -265,13 +266,12 @@ function GameController ($scope) {
 	}
 
 	// le joueur joue un sort
-/*	function playSpell (card) {
-		// call the rigth function
-		// si tu veux transférer une carte d'une pile à une autre, utilise la fonction playCard
-		// seules les valeurs de attack_tmp et def_tmp doivent être modifiées
+	function playSpell (card, state) {
 		card.state = 'visible';
 		eval(card.effect + "()");
-	}*/
+		playCard($scope.hand, $scope.traps, card, state, true);
+		playCard($scope.traps, $scope.graveyard, card, 'hidden', true);
+	}
 
 	// change l'état du bouton de changement de position de la carte
 	function change_switch_value (card) {
@@ -488,13 +488,24 @@ function GameController ($scope) {
 		playCard($scope.enemy_monsters, $scope.enemy_graveyard, weakestMonster, 'hidden', true);
 	}
 
-	function destroyMonsters(monster, index, monsterBoard) {
-		playCard(monsterBoard, $scope.enemy_graveyard, monster, 'hidden', true);
+	function destroyAllMonsters() {
+		var len = $scope.enemy_monsters.length;
+
+		for (var i = 0; i < len; i++) {
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard,
+				$scope.enemy_monsters[i], 'hidden', true);
+		}
+
+		len = $scope.monsters.length;
+		for (var i = 0; i < len; i++) {
+			playCard($scope.monsters, $scope.graveyard,
+				$scope.monsters[i], 'hidden', true);
+		}
 	}
 
-	function destroyAllMonsters() {
-		$scope.enemy_monsters.forEach(destroyMonsters);
-		$scope.monsters.forEach(destroyMonsters);
+	function deSpell() {
+		playCard($scope.enemy_traps, $scope.enemy_graveyard,
+			$scope.enemy_traps[$scope.enemy_traps.length - 1], 'hidden', true);
 	}
 
 	function destroyActiveTrap() {
