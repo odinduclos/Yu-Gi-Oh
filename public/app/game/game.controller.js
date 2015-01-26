@@ -28,9 +28,9 @@ function GameController ($scope) {
 			{_id: 10, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 11, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 12, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "deSpell"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "deSpell"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "deSpell"}
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
 	];
 		// main du joueur
 		$scope.hand = [];
@@ -489,14 +489,12 @@ function GameController ($scope) {
 	}
 
 	function destroyAllMonsters() {
-
-		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
-			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[i], 'hidden', true);
-			i--;
+		while ($scope.enemy_monsters.length > 0) {
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[0], 'hidden', true);
 		}
-		for (var i = 0; i < $scope.monsters.length; i++) {
-			playCard($scope.monsters, $scope.graveyard, $scope.monsters[i], 'hidden', true);
-			i--;
+
+		while ($scope.monsters.length > 0) {
+			playCard($scope.monsters, $scope.graveyard, $scope.monsters[0], 'hidden', true);
 		}
 	}
 
