@@ -28,9 +28,9 @@ function GameController ($scope) {
 			{_id: 10, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 11, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
 			{_id: 12, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyAllMonsters"}
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyWeakestMonster"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyWeakestMonster"},
+			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyWeakestMonster"}
 	];
 		// main du joueur
 		$scope.hand = [];
@@ -267,10 +267,11 @@ function GameController ($scope) {
 
 	// le joueur joue un sort
 	function playSpell (card, state) {
-		card.state = 'visible';
-		eval(card.effect + "()");
 		playCard($scope.hand, $scope.traps, card, state, true);
-		playCard($scope.traps, $scope.graveyard, card, 'hidden', true);
+		if (card.state == "visible") {
+			eval(card.effect + "()");
+			playCard($scope.traps, $scope.graveyard, card, 'hidden', true);
+		}
 	}
 
 	// change l'état du bouton de changement de position de la carte
@@ -469,25 +470,6 @@ function GameController ($scope) {
 		$scope.validate_target = false;
 	}
 
-	function getFirstVisibleEnemyMonster() {
-		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
-			if ($scope.enemy_monsters[i].state == 'visible') {
-				return $scope.enemy_monsters[i];
-			}
-		}
-	}
-
-	function doFissure() {
-		var weakestMonster = getFirstVisibleEnemyMonster();
-		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
-			if (weakestMonster.attack > $scope.enemy_monsters[i].attack &&
-				$scope.enemy_monsters[i].state == 'visible') {
-				weakestMonster = $scope.enemy_monsters[i];
-			}
-		}
-		playCard($scope.enemy_monsters, $scope.enemy_graveyard, weakestMonster, 'hidden', true);
-	}
-
 	function destroyAllMonsters() {
 		while ($scope.enemy_monsters.length > 0) {
 			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[0], 'hidden', true);
@@ -498,10 +480,31 @@ function GameController ($scope) {
 		}
 	}
 
-	function deSpell() {
-		console.log("deSpell", $scope.enemy_traps);
+	function destroySpell() {
 		if ($scope.enemy_traps.length > 0)
 			playCard($scope.enemy_traps, $scope.enemy_graveyard, $scope.enemy_traps[$scope.enemy_traps.length - 1], 'hidden', true);
+	}
+
+	function getFirstVisibleEnemyMonster() {
+		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
+			if ($scope.enemy_monsters[i].state == 'visible') {
+				return $scope.enemy_monsters[i];
+			}
+		}
+		return null;
+	}
+
+	function destroyWeakestMonster() {
+		var weakestMonster = getFirstVisibleEnemyMonster();
+		for (var i = 0; i < $scope.enemy_monsters.length; i++) {
+			if ($scope.enemy_monsters[i].state == 'visible' &&
+				$scope.enemy_monsters[i].attack < weakestMonster.attack) {
+				weakestMonster = $scope.enemy_monsters[i];
+			}
+		}
+		if (weakestMonster != null) {
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, weakestMonster, 'hidden', true);			
+		}
 	}
 
 	function destroyActiveTrap() {
