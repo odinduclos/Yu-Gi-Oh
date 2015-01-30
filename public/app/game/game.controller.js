@@ -15,22 +15,34 @@ function GameController ($scope) {
 		// limiteur de jeu: monstres joués
 		$scope.game_state = {monster_played: false};
 		// folder des cartes
-		$scope.folder = "img/cards/";
+		$scope.folder = "res/";
 		// simulation de BDD
 		$scope.deck = [
-			{_id: 1, stars: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "328px-BlueEyesWhiteDragon-LOB-EN-UR-UE.jpg"},
-			{_id: 2, stars: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "329px-DarkMagician-LOB-EN-UR-UE.png"},
-			{_id: 3, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-			{_id: 4, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-			{_id: 5, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-			{_id: 6, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardianLOB-EN-SR-UE.jpg"},
-			{_id: 7, stars: 8, attack: 2850, def: 2350, attack_tmp: 2850, def_tmp: 2350, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "", txt: "Dragon à cornes!", img: "TriHornedDragon-LOB-EN-ScR-UE.jpg"},
-			{_id: 10, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 11, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 12, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole-LOB-EN-SR-UE.jpg", effect: "doTrapHole"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyWeakestMonster"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyWeakestMonster"},
-			{_id: 13, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "326px-LegendarySwordLOB-EN-SP-UE.jpg", effect: "destroyWeakestMonster"}
+			{_id: 1, stars: 4, attack: 1200, def: 1500, attack_tmp: 1200, def_tmp: 1500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Beaver Warrior", txt: "Guardien celtic!", img: "BeaverWarrior.jpg"},
+			{_id: 2, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardian.png"},
+			{_id: 3, stars: 4, attack: 1300, def: 1400, attack_tmp: 1300, def_tmp: 1400, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "FeralImp.jpg"},
+			{_id: 4, stars: 3, attack: 1300, def: 2000, attack_tmp: 1300, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "GiantSoldierofStone.png"},
+			{_id: 5, stars: 4, attack: 1600, def: 800, attack_tmp: 1600, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "GreatWhite.jpg"},
+			{_id: 6, stars: 4, attack: 1800, def: 1000, attack_tmp: 1800, def_tmp: 1000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "LaJinntheMysticalGenieoftheLamp.png"},
+			{_id: 7, stars: 3, attack: 1200, def: 800, attack_tmp: 1200, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "MammothGraveyard.jpg"},
+			{_id: 8, stars: 4, attack: 800, def: 2000, attack_tmp: 800, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "MysticalElf.jpg"},
+			{_id: 9, stars: 3, attack: 1200, def: 800, attack_tmp: 1200, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "SilverFang.jpg"},
+			{_id: 10, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "WingedDragon,GuardianoftheFortress.jpg"},
+			{_id: 11, stars: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "BlueEyesWhiteDragon.png"},
+			{_id: 12, stars: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "DarkMagician.png"},
+			{_id: 13, stars: 7, attack: 2300, def: 2100, attack_tmp: 2300, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "GaiatheFierceKnight.jpg"},
+			{_id: 14, stars: 7, attack: 2400, def: 2000, attack_tmp: 2400, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "Red-EyesBDragon.jpg"},
+			{_id: 15, stars: 6, attack: 2500, def: 1200, attack_tmp: 2500, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "SummonedSkull.png"},
+			{_id: 16, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DarkHole.png", effect: "destroyWeakestMonster"},
+			{_id: 17, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DeSpell.png", effect: "destroyWeakestMonster"},
+			{_id: 18, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "Fissure.png", effect: "destroyWeakestMonster"},
+			{_id: 19, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "destroyWeakestMonster"},
+			{_id: 20, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "destroyWeakestMonster"},
+			{_id: 21, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "SoulExchange.png", effect: "destroyWeakestMonster"},
+			{_id: 22, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "CastleWalls.jpg", effect: "doTrapHole"},
+			{_id: 23, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "DragonCaptureJar.png", effect: "doTrapHole"},
+			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "doTrapHole"},
+			{_id: 25, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TwoProngedAttack.jpg", effect: "doTrapHole"}
 	];
 		// main du joueur
 		$scope.hand = [];
@@ -38,6 +50,7 @@ function GameController ($scope) {
 		// main de son opposant
 		$scope.enemy_hand = [];
 		$scope.enemy_hand.target = 'hand';
+
 		// board de monstres
 		$scope.monsters = [];
 		$scope.monsters.target = 'enemy_monsters';
@@ -57,7 +70,7 @@ function GameController ($scope) {
 		$scope.enemy_graveyard = [];
 		$scope.enemy_graveyard.target = 'graveyard';
 		// carte par défaut ou dos de carte
-		$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "back.png"};
+		$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "Back.png"};
 		// image apparaissant dans l'encadré de description
 		$scope.focus = $scope.back;
 		// image courante du joueur
