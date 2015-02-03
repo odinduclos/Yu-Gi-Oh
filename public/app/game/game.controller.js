@@ -43,7 +43,12 @@ function GameController ($scope) {
 			{_id: 23, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "DragonCaptureJar.png", effect: "doTrapHole"},
 			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "doTrapHole"},
 			{_id: 25, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TwoProngedAttack.jpg", effect: "doTrapHole"}
-	];
+		];
+		$scope.deck.name = 'deck';
+		$scope.deck.target = 'enemy_deck';
+		$scope.enemy_deck = $scope.deck;
+		$scope.enemy_deck.name = 'enemy_deck';
+		$scope.enemy_deck.target = 'deck';
 		// main du joueur
 		$scope.hand = [];
 		$scope.hand.target = 'enemy_hand';
@@ -150,6 +155,7 @@ function GameController ($scope) {
 	// notifié que l'opposant à bougé une carte d'une stack à une autre
 	socket.on('play', function (data) {
 		$scope.$apply(function () {
+			console.log(data);
 			playCard(eval("$scope." + data.source), eval("$scope." + data.destination), data.card, data.state, false);
 		});
 	});
@@ -201,7 +207,9 @@ function GameController ($scope) {
 			if (destination.length >= 7) {
 				$scope.tip = "Your hand is full.";
 				$scope.logs.push("Your hand is full.");
-				playCard(source, $scope.graveyard, card, 'hidden', true);
+				$scope.card_selected = false;
+				playCard(source, $scope.graveyard, source[card], 'hidden', true);
+				source.splice(card, 1);
 				return card;
 			}
 		}
@@ -225,10 +233,14 @@ function GameController ($scope) {
 		if (state == 'hidden') {
 			card.position = 'defense';
 		}
+		// if (!emit) {
+			// console.log("receive from server", {error: 0, source: source.target, destination: destination.target, card: card, state: state})
+		// }
 		card.source = source.name;
 		card.destination = destination.name;
 		destination.push(card);
 		if (emit) {
+			console.log("send to server", {error: 0, source: source.target, destination: destination.target, card: card, state: state})
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
 			if (destination.target == 'enemy_monsters') {
 				check_for_traps('play_monster');
@@ -238,7 +250,7 @@ function GameController ($scope) {
 				check_for_traps('play_spell');
 			}
 		}
-		for (var i = 0; i < source.length; i++) {
+		for (var i = 0; i < source.length && $scope.card_selected; i++) {
 			// /!\ Point critique: la comparaison par instance ne fonctionne pas. Penser à mettre un id unique à chaque carte.
 			if (source[i]._id === card._id) {
 				$scope.tip = "Play: " + card.name + ' in ' + state + '.';
