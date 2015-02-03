@@ -47,28 +47,36 @@ function GameController ($scope) {
 		// main du joueur
 		$scope.hand = [];
 		$scope.hand.target = 'enemy_hand';
+		$scope.hand.name = 'hand';
 		// main de son opposant
 		$scope.enemy_hand = [];
 		$scope.enemy_hand.target = 'hand';
+		$scope.enemy_hand.name = 'enemy_hand';
 
 		// board de monstres
 		$scope.monsters = [];
 		$scope.monsters.target = 'enemy_monsters';
+		$scope.monsters.name = 'monsters';
 		// board de monstres ennemi
 		$scope.enemy_monsters = [];
 		$scope.enemy_monsters.target = 'monsters';
+		$scope.enemy_monsters.name = 'enemy_monsters';
 		// board de traps et de spells
 		$scope.traps = [];
 		$scope.traps.target = 'enemy_traps';
+		$scope.traps.name = 'traps';
 		// board de traps et de spells ennemi
 		$scope.enemy_traps = [];
 		$scope.enemy_traps.target = 'traps';
+		$scope.enemy_traps.name = 'enemy_traps';
 		// cimetière
 		$scope.graveyard = [];
 		$scope.graveyard.target = 'enemy_graveyard';
+		$scope.graveyard.name = 'graveyard';
 		// cimetière de l'ennemi
 		$scope.enemy_graveyard = [];
 		$scope.enemy_graveyard.target = 'graveyard';
+		$scope.enemy_graveyard.name = 'enemy_graveyard';
 		// carte par défaut ou dos de carte
 		$scope.back = {_id: null, txt: "Sélectionnez une carte pour avoir sa description", img: "Back.png"};
 		// image apparaissant dans l'encadré de description
@@ -146,6 +154,12 @@ function GameController ($scope) {
 		});
 	});
 
+	socket.on('update_pv', function (data) {
+		$scope.$apply(function () {
+			$scope.pv = data.pv;
+		});
+	});
+
 	// notifié que l'opposant à finit son tour
 	socket.on('end_turn', function (data) {
 		$scope.tip = 'Your turn!';
@@ -170,6 +184,14 @@ function GameController ($scope) {
 		var card = Math.round(Math.random() * (source.length - 1));
 		$scope.tip = "Draw: " + source[card].name + '.';
 		$scope.logs.push("Draw: " + source[card].name + '.');
+		if (destination.name == 'hand') {
+			if (destination.length >= 7) {
+				$scope.tip = "Your hand is full.";
+				$scope.logs.push("Your hand is full.");
+				playCard(source, $scope.graveyard, card, 'hidden', true);
+				return card;
+			}
+		}
 		destination.push(source[card]);
 		socket.emit('draw', {error: 0, card: card});
 		source.splice(card, 1);
@@ -178,6 +200,14 @@ function GameController ($scope) {
 
 	// bouge une carte d'une stack à une autre
 	function playCard (source, destination, card, state, emit) {
+		if (destination.name == 'monsters' || destination.name == 'traps') {
+			if (destination.length >= 5) {
+				$scope.tip = "Your board is full.";
+				$scope.logs.push("Your board is full.");
+				// playCard(source, $scope.graveyard, card, state, emit);
+				return false;
+			}
+		}
 		card.state = state;
 		if (state == 'hidden') {
 			card.position = 'defense';
@@ -203,9 +233,10 @@ function GameController ($scope) {
 					hide_buttons();
 				}
 				source.splice(i, 1);
-				return;
+				return true;
 			}
 		};
+		return true;
 	}
 
 	// affiche la carte survolée dans l'encadré de description
@@ -255,8 +286,8 @@ function GameController ($scope) {
 					$scope.action = 'sacrifice';
 					return;
 				}
-				$scope.game_state.monster_played = true;
-				playCard($scope.hand, $scope.monsters, $scope.card_selected, state, true);
+				// $scope.game_state.monster_played = true;
+				$scope.game_state.monster_played = playCard($scope.hand, $scope.monsters, $scope.card_selected, state, true);
 			} else if ($scope.card_selected.type == 'spell') {
 				playSpell($scope.card_selected, state);
 			} else {
@@ -299,19 +330,21 @@ function GameController ($scope) {
 	}
 
 	function show_buttons(card) {
+		/*console.log("show buttons of ", card);*/
+		hide_buttons(true);
 		if ($scope.game_turn.my_turn && $scope.card_selected && !$scope.action) {
 			if ($scope.card_selected.from == 'board') {
-				if ($scope.game_turn.turn != 0 && $scope.card_selected.type == 'monster' && !$scope.card_selected.attacked) {
-					$scope.attack_button = true;
-				}
-				if ($scope.card_selected.state != 'hidden') {
+				if ($scope.card_selected.type == 'monster' && $scope.card_selected.state != 'hidden') {
+					if ($scope.game_turn.turn > 0 && !$scope.card_selected.attacked) {
+						$scope.attack_button = true;	
+					}
 					$scope.switch_button = true;
 				}
 				if ($scope.card_selected.state == 'hidden') {
 					$scope.visible_button = true;
 				}
 			}
-			if ($scope.card_selected.from == 'hand' && (!$scope.game_state.monster_played || $scope.card_selected.type != 'monster')) {
+			else if ($scope.card_selected.from == 'hand' && (!$scope.game_state.monster_played || $scope.card_selected.type != 'monster')) {
 				$scope.play_hidden_button = true;
 				$scope.play_visible_button = true;
 				if ($scope.card_selected.type == 'monster') {
@@ -326,13 +359,13 @@ function GameController ($scope) {
 
 	function check_for_traps(param) {
 		// verifie les traps ciblant les cartes ennemies
-		console.log(param);
+		/*console.log(param);
 		console.log($scope.traps);
-		console.log($scope.enemy_traps);
+		console.log($scope.enemy_traps);*/
 		for (var i = 0; i < $scope.traps.length; i++) {
-			console.log($scope.traps[i]);
+			/*console.log($scope.traps[i]);*/
 			if ($scope.traps[i].type == 'trap') {
-				console.log($scope.traps[i].effect);
+				/*console.log($scope.traps[i].effect);*/
 				eval($scope.traps[i].effect + "('" + param + "')");
 			}
 		};
@@ -342,6 +375,7 @@ function GameController ($scope) {
 			}
 		};
 	}
+
 
 	function hide_buttons(end) {
 		$scope.attack_button = false;
@@ -373,6 +407,8 @@ function GameController ($scope) {
 			$scope.tip = $scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.";
 			$scope.logs.push($scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.");
 			$scope.enemy_pv -= $scope.card_selected.attack_tmp;
+			console.log('emit');
+			socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
 		} else {
 			$scope.tip = "Select a target.";
 			$scope.logs.push("Select a target.");
@@ -397,10 +433,12 @@ function GameController ($scope) {
 
 	$scope.switch_state = function (card) {
 		if (card.state == 'visible') {
-			card.state == 'hidden';
+			card.state = 'hidden';
 		} else {
-			card.state == 'visible';
+			card.state = 'visible';
 		}
+		show_buttons(card);
+		// console.log('card state', card);
 	}
 
 	// applique les effets du combat aux cartes
@@ -422,6 +460,8 @@ function GameController ($scope) {
 			playCard($scope.monsters, $scope.graveyard, $scope.card_selected, 'hidden', true);
 			$scope.enemy_pv -= def - $scope.card_selected.attack_tmp;
 		}
+		console.log('emit');
+		socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
 	}
 
 	// choix de l'action à faire en fonction de l'état de la variable action lor du click sur une carte
@@ -532,9 +572,9 @@ function GameController ($scope) {
 
 	function doTrapHole(param) {
 		var lastMonsterNb = $scope.monsters.length - 1;
-		console.log($scope.monsters);
+		/*console.log($scope.monsters);
 		console.log(lastMonsterNb);
-		console.log($scope.monsters[lastMonsterNb]);
+		console.log($scope.monsters[lastMonsterNb]);*/
 		if (param == 'play_monster' && $scope.monsters[lastMonsterNb].attack >= 1000) {
 			playCard($scope.monsters, $scope.enemy_graveyard, $scope.monsters[lastMonsterNb], 'hidden', true);
 		}
