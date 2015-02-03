@@ -160,6 +160,19 @@ function GameController ($scope) {
 		});
 	});
 
+	socket.on('set_visible', function (data) {
+		$scope.$apply(function () {
+			var card = data.card;
+			var from = eval("$scope." + card.destination);
+			var stack = eval("$scope." + from.target);
+			for (var i = 0; i < stack.length; i++) {
+				if (stack[i]._id == card._id) {
+					$scope.switch_state(stack[i]);
+				}
+			};
+		});
+	});
+
 	// notifié que l'opposant à finit son tour
 	socket.on('end_turn', function (data) {
 		$scope.tip = 'Your turn!';
@@ -212,6 +225,8 @@ function GameController ($scope) {
 		if (state == 'hidden') {
 			card.position = 'defense';
 		}
+		card.source = source.name;
+		card.destination = destination.name;
 		destination.push(card);
 		if (emit) {
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
@@ -330,7 +345,6 @@ function GameController ($scope) {
 	}
 
 	function show_buttons(card) {
-		/*console.log("show buttons of ", card);*/
 		hide_buttons(true);
 		if ($scope.game_turn.my_turn && $scope.card_selected && !$scope.action) {
 			if ($scope.card_selected.from == 'board') {
@@ -359,13 +373,8 @@ function GameController ($scope) {
 
 	function check_for_traps(param) {
 		// verifie les traps ciblant les cartes ennemies
-		/*console.log(param);
-		console.log($scope.traps);
-		console.log($scope.enemy_traps);*/
 		for (var i = 0; i < $scope.traps.length; i++) {
-			/*console.log($scope.traps[i]);*/
 			if ($scope.traps[i].type == 'trap') {
-				/*console.log($scope.traps[i].effect);*/
 				eval($scope.traps[i].effect + "('" + param + "')");
 			}
 		};
@@ -407,7 +416,6 @@ function GameController ($scope) {
 			$scope.tip = $scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.";
 			$scope.logs.push($scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.");
 			$scope.enemy_pv -= $scope.card_selected.attack_tmp;
-			console.log('emit');
 			socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
 		} else {
 			$scope.tip = "Select a target.";
@@ -438,7 +446,16 @@ function GameController ($scope) {
 			card.state = 'visible';
 		}
 		show_buttons(card);
-		// console.log('card state', card);
+	}
+
+	$scope.switch_state_selected = function () {
+		if ($scope.card_selected.state == 'visible') {
+			$scope.card_selected.state = 'hidden';
+		} else {
+			$scope.card_selected.state = 'visible';
+			socket.emit('set_visible', {error: 0, card: $scope.card_selected});
+		}
+		show_buttons($scope.card_selected);
 	}
 
 	// applique les effets du combat aux cartes
@@ -460,7 +477,6 @@ function GameController ($scope) {
 			playCard($scope.monsters, $scope.graveyard, $scope.card_selected, 'hidden', true);
 			$scope.enemy_pv -= def - $scope.card_selected.attack_tmp;
 		}
-		console.log('emit');
 		socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
 	}
 
@@ -572,9 +588,6 @@ function GameController ($scope) {
 
 	function doTrapHole(param) {
 		var lastMonsterNb = $scope.monsters.length - 1;
-		/*console.log($scope.monsters);
-		console.log(lastMonsterNb);
-		console.log($scope.monsters[lastMonsterNb]);*/
 		if (param == 'play_monster' && $scope.monsters[lastMonsterNb].attack >= 1000) {
 			playCard($scope.monsters, $scope.enemy_graveyard, $scope.monsters[lastMonsterNb], 'hidden', true);
 		}
