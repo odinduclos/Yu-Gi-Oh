@@ -599,9 +599,16 @@ function GameController ($scope) {
 	}
 
 	function doTrapHole(param) {
-		var lastMonsterNb = $scope.monsters.length - 1;
-		if (param == 'play_monster' && $scope.monsters[lastMonsterNb].attack >= 1000) {
-			playCard($scope.monsters, $scope.enemy_graveyard, $scope.monsters[lastMonsterNb], 'hidden', true);
+		//ACHTUNG!!! BUG D'AFFICHAGE QUI NE NOTIFIE PAS QUE LA CARTE SUR LE FIELD EST AU CIMETIERE !
+		var found = false;
+		if (param == 'play_monster' && $scope.monsters[$scope.monsters.length - 1].attack >= 1000) {
+			playCard($scope.monsters, $scope.graveyard, $scope.monsters[$scope.monsters.length - 1], 'hidden', true);
+			for (var i = 0; !found && i < $scope.enemy_traps.length; i++) {
+				if ($scope.enemy_traps[i].effect == 'doTrapHole') {
+					found = true;
+					playCard($scope.enemy_traps, $scope.enemy_graveyard, $scope.enemy_traps[i], 'hidden', true);
+				}
+			}
 		}
 	}
 
