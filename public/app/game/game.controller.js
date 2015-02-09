@@ -134,13 +134,14 @@ function GameController ($scope) {
 	// notifié que la partie finit
 	socket.on('endGame', function (data) {
 		$scope.$apply(function () {
-			if (data.error != 0) {
+			/*if (data.error != 0) {
 				$scope.logs.push(data.message);
 			}
 			$scope.game = false;
 			$scope.tip = 'The game end!';
 			$scope.logs.push('The game end!');
-			init_vars();
+			init_vars();*/
+			show_modal(data.message);
 		});
 	});
 
@@ -155,7 +156,7 @@ function GameController ($scope) {
 	// notifié que l'opposant à bougé une carte d'une stack à une autre
 	socket.on('play', function (data) {
 		$scope.$apply(function () {
-			console.log(data);
+			console.log('receive from server', data);
 			playCard(eval("$scope." + data.source), eval("$scope." + data.destination), data.card, data.state, false);
 		});
 	});
@@ -163,6 +164,10 @@ function GameController ($scope) {
 	socket.on('update_pv', function (data) {
 		$scope.$apply(function () {
 			$scope.pv = data.pv;
+			if ($scope.pv <= 0) {
+				show_modal("You are dead. Try again?");
+				socket.emit('end_game', {error: 0, message: "A great victory. Try again?"});
+			}
 		});
 	});
 
@@ -190,6 +195,22 @@ function GameController ($scope) {
 			draw();
 		});
 	});
+
+	function show_modal(string) {
+		$("#modal #modal_p").html(string);
+		$("#modal_shadow").show();
+		$("#modal").show("slow");
+	}
+
+	$scope.modal_accept = function () {
+		$("#modal_shadow").hide();
+		$("#modal").hide("slow");
+		$scope.game = false;
+		$scope.tip = 'The game end!';
+		$scope.logs.push('The game end!');
+		socket = io.connect();
+		init_vars();
+	}
 
 	// initialisation du jeu et pioche
 	function init() {
@@ -238,6 +259,7 @@ function GameController ($scope) {
 		// }
 		card.source = source.name;
 		card.destination = destination.name;
+		console.log("push", card);
 		destination.push(card);
 		if (emit) {
 			console.log("send to server", {error: 0, source: source.target, destination: destination.target, card: card, state: state})
@@ -250,7 +272,7 @@ function GameController ($scope) {
 				check_for_traps('play_spell');
 			}
 		}
-		for (var i = 0; i < source.length && $scope.card_selected; i++) {
+		for (var i = 0; i < source.length/* && $scope.card_selected*/; i++) {
 			// /!\ Point critique: la comparaison par instance ne fonctionne pas. Penser à mettre un id unique à chaque carte.
 			if (source[i]._id === card._id) {
 				$scope.tip = "Play: " + card.name + ' in ' + state + '.';
@@ -419,6 +441,11 @@ function GameController ($scope) {
 
 	// la carte selectionnée attaque
 	$scope.attack = function () {
+		if ($scope.card_selected.attacked) {
+			$scope.tip = 'Your monster have already attacked this turn.';
+			$scope.logs.push('Your monster have already attacked this turn.');
+			return;
+		}
 		if ($scope.card_selected.position != 'attack') {
 			$scope.tip = 'In order to attack, your monster should be in attack position.';
 			$scope.logs.push('In order to attack, your monster should be in attack position.');
@@ -429,6 +456,8 @@ function GameController ($scope) {
 			$scope.logs.push($scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.");
 			$scope.enemy_pv -= $scope.card_selected.attack_tmp;
 			socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
+			$scope.card_selected.attacked = true;
+			show_buttons($scope.card_selected);
 		} else {
 			$scope.tip = "Select a target.";
 			$scope.logs.push("Select a target.");
@@ -472,7 +501,6 @@ function GameController ($scope) {
 
 	// applique les effets du combat aux cartes
 	function apply_fight (card, def) {
-		$scope.card_selected.attacked = true;
 		if ($scope.card_selected.attack_tmp > def) {
 			$scope.tip = $scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack_tmp - def) + " damages to your opponent.";
 			$scope.logs.push($scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack_tmp - def) + " damages to your opponent.");
@@ -489,6 +517,8 @@ function GameController ($scope) {
 			playCard($scope.monsters, $scope.graveyard, $scope.card_selected, 'hidden', true);
 			$scope.enemy_pv -= def - $scope.card_selected.attack_tmp;
 		}
+		$scope.card_selected.attacked = true;
+		show_buttons($scope.card_selected);
 		socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
 	}
 
@@ -600,13 +630,13 @@ function GameController ($scope) {
 
 	function doTrapHole(param) {
 		//ACHTUNG!!! BUG D'AFFICHAGE QUI NE NOTIFIE PAS QUE LA CARTE SUR LE FIELD EST AU CIMETIERE !
-		var found = false;
 		if (param == 'play_monster' && $scope.monsters[$scope.monsters.length - 1].attack >= 1000) {
 			playCard($scope.monsters, $scope.graveyard, $scope.monsters[$scope.monsters.length - 1], 'hidden', true);
-			for (var i = 0; !found && i < $scope.enemy_traps.length; i++) {
+			for (var i = 0; i < $scope.enemy_traps.length; i++) {
 				if ($scope.enemy_traps[i].effect == 'doTrapHole') {
-					found = true;
+					console.log("trap to delete", $scope.enemy_traps[i]);
 					playCard($scope.enemy_traps, $scope.enemy_graveyard, $scope.enemy_traps[i], 'hidden', true);
+					return;
 				}
 			}
 		}

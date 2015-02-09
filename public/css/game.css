@@ -1,4 +1,6 @@
 body {
+	top: -18px;
+	left: 0;
 	margin:0;
 	padding:0;
 	background: url(../img/wallpaper.jpg) no-repeat center fixed !important; 
@@ -132,32 +134,32 @@ body {
 #info_players {
 	float: left;
 	margin-left: 20px;
-	z-index: 7;
+	z-index: 3;
 }
 
 #description_card {
 	float: left;
 	margin-left: 20px;
-	z-index: 8;
+	z-index: 4;
 }
 
 #board {
 	float: left;
-	z-index: 1;
+	z-index: 5;
 }
 
 .log-fieldset {
 	font-size: 12px;
 	height: 51px;
 	position: relative; 
-	z-index: 99999;
+	z-index: 95;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
 #menu {
 	margin-left: 20px;
 	float: left;
-	z-index: 99;
+	z-index: 95;
 }
 .menu-fieldset {
 	background-color: white;
@@ -165,7 +167,7 @@ body {
 	top: -18px;
 	left: 0px;*/
 	/*width: 100%;*/
-	z-index: 9;
+	z-index: 5;
 	min-width: 800px;
 	/*opacity: 0.85;*/
 }
@@ -176,7 +178,7 @@ body {
 	bottom: 110px;
 	right: 0;
 	width: 300px;
-	z-index: 99;
+	z-index: 5;
 	/*opacity: 0.85;*/
 }
 
@@ -191,4 +193,28 @@ body {
 
 .green {
 	border: 2px solid green !important;
+}
+
+#modal_shadow {
+	background-color: black;
+	opacity: 0.8;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: none;
+	z-index: 98;
+}
+
+#modal {
+	border-radius: 5px;
+	background-color: white;
+	position: relative;
+	padding: 10px;
+	width: 800px;
+	top: 100px;
+	margin: auto;
+	display: none;
+	z-index: 99;
 }

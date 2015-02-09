@@ -4,6 +4,12 @@
 		<li ng-repeat="log in logs track by $index">{{log}}</li>
 	</ul>
 </fieldset>
+<div id="modal_shadow"></div>
+<div id="modal">
+	<p id="modal_p">Test</p>
+	<input id="modal_cancel" type="submit" class="button alert" ng-click="modal_cancel()" value="Cancel">
+	<input id="modal_accept" type="submit" class="button" ng-click="modal_accept()" value="OK">
+</div>
 <div id="desk" ng-if="game">
 	<div id="board">
 		<fieldset class="game-fieldset ennemy-hand-fieldset">

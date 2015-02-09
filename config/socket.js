@@ -39,14 +39,22 @@ module.exports = function (socket) {
 	});
 	socket.on('update_pv', function (data) {
 		if (data.error == 0)
-			socket.to(user.room).emit('update_pv', data);	
+			socket.to(user.room).emit('update_pv', data);
 	});
 	socket.on('set_visible', function (data) {
 		if (data.error == 0)
 			socket.to(user.room).emit('set_visible', data);	
 	});
+	socket.on('end_game', function (data) {
+		console.log("end game")
+		if (data.error == 0)
+			socket.to(user.room).emit('endGame', data);
+		user.connected = false;
+		user.room = false;
+		other.room = false;
+	});
 	socket.on('disconnect', function () {
-		socket.to(user.room).emit('endGame', {error: 31, message: 'Your opponent has left'});
+		socket.to(user.room).emit('endGame', {error: 31, message: 'Your opponent has left. A great victory! Try again?'});
 		user.connected = false;
 		user.room = false;
 		other.room = false;
