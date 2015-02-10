@@ -162,11 +162,17 @@ function GameController ($scope) {
 	});
 
 	socket.on('update_pv', function (data) {
+		console.log('update_pv', data);
 		$scope.$apply(function () {
-			$scope.pv = data.pv;
+			$scope.pv = data.enemy_pv;
+			$scope.enemy_pv = data.pv;
 			if ($scope.pv <= 0) {
 				show_modal("You are dead. Try again?");
 				socket.emit('end_game', {error: 0, message: "A great victory. Try again?"});
+			}
+			if ($scope.enemy_pv <= 0) {
+				show_modal("A great victory. Try again?");
+				socket.emit('end_game', {error: 0, message: "You are dead. Try again?"});
 			}
 		});
 	});
@@ -455,7 +461,7 @@ function GameController ($scope) {
 			$scope.tip = $scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.";
 			$scope.logs.push($scope.card_selected.name + " attack directly your opponent for " + $scope.card_selected.attack_tmp + " damages.");
 			$scope.enemy_pv -= $scope.card_selected.attack_tmp;
-			socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
+			socket.emit('update_pv', {error: 0, pv: $scope.pv, enemy_pv: $scope.enemy_pv});
 			$scope.card_selected.attacked = true;
 			show_buttons($scope.card_selected);
 		} else {
@@ -504,8 +510,8 @@ function GameController ($scope) {
 		if ($scope.card_selected.attack_tmp > def) {
 			$scope.tip = $scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack_tmp - def) + " damages to your opponent.";
 			$scope.logs.push($scope.card_selected.name + " destroy " + card.name + " and inflict " + ($scope.card_selected.attack_tmp - def) + " damages to your opponent.");
-			playCard($scope.enemy_monsters, $scope.enemy_graveyard, card, 'hidden', true);
 			$scope.enemy_pv -= $scope.card_selected.attack_tmp - def;
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, card, 'hidden', true);
 		} else if ($scope.card_selected.attack_tmp == def) {
 			$scope.tip = $scope.card_selected.name + " and " + card.name + " both destroyed.";
 			$scope.logs.push($scope.card_selected.name + " and " + card.name + " both destroyed.");
@@ -514,12 +520,12 @@ function GameController ($scope) {
 		} else if ($scope.card_selected.attack_tmp < def) {
 			$scope.tip = card.name + " destroy " + $scope.card_selected.name + " and inflict " + (def - $scope.card_selected.attack_tmp) + " damages to you.";
 			$scope.logs.push(card.name + " destroy " + $scope.card_selected.name + " and inflict " + (def - $scope.card_selected.attack_tmp) + " damages to you.");
+			$scope.pv -= def - $scope.card_selected.attack_tmp;
 			playCard($scope.monsters, $scope.graveyard, $scope.card_selected, 'hidden', true);
-			$scope.enemy_pv -= def - $scope.card_selected.attack_tmp;
 		}
 		$scope.card_selected.attacked = true;
 		show_buttons($scope.card_selected);
-		socket.emit('update_pv', {error: 0, pv: $scope.enemy_pv});
+		socket.emit('update_pv', {error: 0, pv: $scope.pv, enemy_pv: $scope.enemy_pv});
 	}
 
 	// choix de l'action à faire en fonction de l'état de la variable action lor du click sur une carte
