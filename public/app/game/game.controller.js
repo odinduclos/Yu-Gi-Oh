@@ -33,12 +33,12 @@ function GameController ($scope) {
 			{_id: 13, stars: 7, attack: 2300, def: 2100, attack_tmp: 2300, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "GaiatheFierceKnight.jpg"},
 			{_id: 14, stars: 7, attack: 2400, def: 2000, attack_tmp: 2400, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "Red-EyesBDragon.jpg"},
 			{_id: 15, stars: 6, attack: 2500, def: 1200, attack_tmp: 2500, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "SummonedSkull.png"},
-			{_id: 16, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DarkHole.png", effect: "destroyActiveTrap"},
-			{_id: 17, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DeSpell.png", effect: "destroyActiveTrap"},
-			{_id: 18, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "Fissure.png", effect: "destroyActiveTrap"},
-			{_id: 19, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "destroyActiveTrap"},
-			{_id: 20, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "destroyActiveTrap"},
-			{_id: 21, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "SoulExchange.png", effect: "destroyActiveTrap"},
+			{_id: 16, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DarkHole.png", effect: "rebornMonster"},
+			{_id: 17, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DeSpell.png", effect: "rebornMonster"},
+			{_id: 18, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "Fissure.png", effect: "rebornMonster"},
+			{_id: 19, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "rebornMonster"},
+			{_id: 20, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "rebornMonster"},
+			{_id: 21, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "SoulExchange.png", effect: "rebornMonster"},
 			{_id: 22, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "CastleWalls.jpg", effect: "doTrapHole"},
 			{_id: 23, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "DragonCaptureJar.png", effect: "doTrapHole"},
 			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "doTrapHole"},
@@ -270,11 +270,12 @@ function GameController ($scope) {
 		if (emit) {
 			console.log("send to server", {error: 0, source: source.target, destination: destination.target, card: card, state: state})
 			socket.emit('play', {error: 0, source: source.target, destination: destination.target, card: card, state: state});
-			if (destination.target == 'enemy_monsters') {
+		} else {
+			if (destination.name == 'enemy_monsters') {
 				check_for_traps('play_monster');
-			} else if (destination.target == 'enemy_traps' && card.type == 'trap') {
+			} else if (destination.name == 'enemy_traps' && card.type == 'trap') {
 				check_for_traps('play_trap');
-			} else if (destination.target == 'enemy_spells' && card.type == 'spell') {
+			} else if (destination.name == 'enemy_spells' && card.type == 'spell') {
 				check_for_traps('play_spell');
 			}
 		}
@@ -412,6 +413,7 @@ function GameController ($scope) {
 	}
 
 	function check_for_traps(param) {
+		console.log("OK");
 		// verifie les traps ciblant les cartes ennemies
 		for (var i = 0; i < $scope.traps.length; i++) {
 			if ($scope.traps[i].type == 'trap') {
@@ -562,27 +564,69 @@ function GameController ($scope) {
 	}
 
 	$scope.next_target = function (card) {
+		for (var s = 0; s < $scope.targets_choice.length; s++) {
+			for (var i = 0; i < $scope.targets_choice[s].length; i++) {
+				if ($scope.targets_choice[s][i]._id == card._id && i < $scope.targets_choice[s].length - 1) {
+					$scope.target_choice = $scope.targets_choice[s][++i];
+					$scope.target_stack_choice = $scope.targets_choice[s].name;
+					return;
+				} else if ($scope.targets_choice[s][i]._id == card._id && i == $scope.targets_choice[s].length - 1 && s < $scope.targets_choice[s].length - 1) {
+					$scope.target_choice = $scope.targets_choice[s + 1][0];
+					$scope.target_stack_choice = $scope.targets_choice[s + 1].name;
+					return;
+				}
+			};
+		};
+		/*var next = false;
 		$scope.targets_choice.forEach(function (stack) {
+			if (next) {
+				$scope.target_choice = stack[0];
+				$scope.target_stack_choice = stack.name;
+				return;
+			}
 			for (var i = 0; i < stack.length; i++) {
 				if (stack[i]._id == card._id && i < stack.length - 1) {
 					$scope.target_choice = stack[++i];
 					$scope.target_stack_choice = stack.name;
 					return;
+				} else if (stack[i]._id == card._id && i == stack.length - 1) {
+					next = true;
 				}
 			};
-		});
+		});*/
 	}
 
 	$scope.previous_target = function (card) {
-		$scope.targets_choice.forEach(function (stack) {
-			for (var i = $scope.targets_choice.length - 1; i >= 0; i--) {
-				if ($scope.targets_choice[i]._id == card._id && i > 0) {
-					$scope.target_choice = $scope.targets_choice[--i];
-					$scope.target_stack_choice = stack.name;
+		/*var next = false;*/
+		for (var s = 0; s < $scope.targets_choice.length; s++) {
+			for (var i = $scope.targets_choice[s].length - 1; i >= 0; i--) {
+				if ($scope.targets_choice[s][i]._id == card._id && i > 0) {
+					$scope.target_choice = $scope.targets_choice[s][--i];
+					$scope.target_stack_choice = $scope.targets_choice[s].name;
+					return;
+				} else if ($scope.targets_choice[s][i]._id == card._id && i == 0 && s > 0) {
+					$scope.target_choice = $scope.targets_choice[s-1][$scope.targets_choice[s-1].length-1];
+					$scope.target_stack_choice = $scope.targets_choice[s-1].name;
 					return;
 				}
 			};
-		});
+		};
+		/*$scope.targets_choice.forEach(function (stack) {
+			if (next) {
+				$scope.target_choice = stack[stack.length - 1];
+				$scope.target_stack_choice = stack.name;
+				return;
+			}
+			for (var i = stack.length - 1; i >= 0; i--) {
+				if (stack[i]._id == card._id && i > 0) {
+					$scope.target_choice = stack[--i];
+					$scope.target_stack_choice = stack.name;
+					return;
+				} else if (stack[i]._id == card._id && i == 0) {
+					next = true;
+				}
+			};
+		});*/
 	}
 
 	$scope.validate = function () {
@@ -649,6 +693,7 @@ function GameController ($scope) {
 		$scope.target_stack_choice = 'graveyard';
 		$scope.targets_choice = [$scope.graveyard, $scope.enemy_graveyard];
 		$scope.validate_target = false;
+		show_buttons(null);
 	}
 
 	function destroyActiveTrap() {
@@ -657,6 +702,7 @@ function GameController ($scope) {
 		$scope.target_stack_choice = 'enemy_traps';
 		$scope.targets_choice = [$scope.enemy_traps];
 		$scope.validate_target = false;
+		show_buttons(null);
 	}
 
 	function tributeEnemyMonster() {
@@ -665,16 +711,16 @@ function GameController ($scope) {
 		$scope.target_stack_choice = 'enemy_traps';
 		$scope.targets_choice = [$scope.enemy_traps];
 		$scope.validate_target = false;
+		show_buttons(null);
 	}
 
 	function doTrapHole(param) {
-		//ACHTUNG!!! BUG D'AFFICHAGE QUI NE NOTIFIE PAS QUE LA CARTE SUR LE FIELD EST AU CIMETIERE !
-		if (param == 'play_monster' && $scope.monsters[$scope.monsters.length - 1].attack >= 1000) {
-			playCard($scope.monsters, $scope.graveyard, $scope.monsters[$scope.monsters.length - 1], 'hidden', true);
-			for (var i = 0; i < $scope.enemy_traps.length; i++) {
-				if ($scope.enemy_traps[i].effect == 'doTrapHole') {
-					console.log("trap to delete", $scope.enemy_traps[i]);
-					playCard($scope.enemy_traps, $scope.enemy_graveyard, $scope.enemy_traps[i], 'hidden', true);
+		if (param == 'play_monster' && $scope.enemy_monsters[$scope.enemy_monsters.length - 1].attack >= 1000) {
+			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[$scope.enemy_monsters.length - 1], 'hidden', true);
+			for (var i = 0; i < $scope.traps.length; i++) {
+				if ($scope.traps[i].effect == 'doTrapHole') {
+					console.log("trap to delete", $scope.traps[i]);
+					playCard($scope.traps, $scope.graveyard, $scope.traps[i], 'hidden', true);
 					return;
 				}
 			}
