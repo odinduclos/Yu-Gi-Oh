@@ -33,16 +33,13 @@ function GameController ($scope) {
 			{_id: 13, stars: 7, attack: 2300, def: 2100, attack_tmp: 2300, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "GaiatheFierceKnight.jpg"},
 			{_id: 14, stars: 7, attack: 2400, def: 2000, attack_tmp: 2400, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "Red-EyesBDragon.jpg"},
 			{_id: 15, stars: 6, attack: 2500, def: 1200, attack_tmp: 2500, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "SummonedSkull.png"},
-			{_id: 16, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DarkHole.png", effect: "rebornMonster"},
-			{_id: 17, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DeSpell.png", effect: "rebornMonster"},
-			{_id: 18, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "Fissure.png", effect: "rebornMonster"},
+			{_id: 16, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DarkHole.png", effect: "destroyAllMonsters"},
+			{_id: 17, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DeSpell.png", effect: "destroySpell"},
+			{_id: 18, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "Fissure.png", effect: "destroyWeakestMonster"},
 			{_id: 19, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "rebornMonster"},
-			{_id: 20, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "rebornMonster"},
-			{_id: 21, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "SoulExchange.png", effect: "rebornMonster"},
-			{_id: 22, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "CastleWalls.jpg", effect: "doTrapHole"},
-			{_id: 23, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "DragonCaptureJar.png", effect: "doTrapHole"},
-			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "doTrapHole"},
-			{_id: 25, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TwoProngedAttack.jpg", effect: "doTrapHole"}
+			{_id: 20, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "destroyTrap"},
+			{_id: 21, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "SoulExchange.png", effect: "sacrificeEnemyMonster"},
+			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "destroyStrongMonster"},
 		];
 		$scope.deck.name = 'deck';
 		$scope.deck.target = 'enemy_deck';
@@ -561,6 +558,17 @@ function GameController ($scope) {
 			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
 			$scope.logs.push("Select " + $scope.targets + " monster to sacrifice.");
 		}
+		if ($scope.action == 'increaseDef') {
+			$scope.targets--;
+			if ($scope.targets == 0) {
+				$scope.card_selected.def_tmp += 500;
+				console.log("DEF " + $scope.card_selected);
+				$scope.action = false;
+				return;
+			}
+			$scope.tip = "Select " + $scope.targets + " to increase its def by 500";
+			$scope.logs.push($scope.tip);
+		}
 	}
 
 	$scope.next_target = function (card) {
@@ -633,7 +641,7 @@ function GameController ($scope) {
 		// ici pour la validation de la carte target_choice
 		switch ($scope.action) {
 			case 'dead monster selection':
-				playCard($scope.target_stack_choice, $scope.monsters, $scope.target_choice, 'visible', true);
+				playCard(eval("$scope." + $scope.target_stack_choice), $scope.monsters, $scope.target_choice, 'visible', true);
 				break;
 			case 'trap destruction':
 				if ($scope.target_choice.state == 'visible') {
@@ -696,7 +704,7 @@ function GameController ($scope) {
 		show_buttons(null);
 	}
 
-	function destroyActiveTrap() {
+	function destroyTrap() {
 		$scope.action = 'trap destruction';
 		$scope.target_choice = $scope.enemy_traps[0];
 		$scope.target_stack_choice = 'enemy_traps';
@@ -705,7 +713,7 @@ function GameController ($scope) {
 		show_buttons(null);
 	}
 
-	function tributeEnemyMonster() {
+	function sacrificeEnemyMonster() {
 		$scope.action = 'trap destruction';
 		$scope.target_choice = $scope.enemy_traps[0];
 		$scope.target_stack_choice = 'enemy_traps';
@@ -714,21 +722,18 @@ function GameController ($scope) {
 		show_buttons(null);
 	}
 
-	function doTrapHole(param) {
+	function destroyStrongMonster(param) {
 		if (param == 'play_monster' && $scope.enemy_monsters[$scope.enemy_monsters.length - 1].attack >= 1000) {
 			playCard($scope.enemy_monsters, $scope.enemy_graveyard, $scope.enemy_monsters[$scope.enemy_monsters.length - 1], 'hidden', true);
 			for (var i = 0; i < $scope.traps.length; i++) {
-				if ($scope.traps[i].effect == 'doTrapHole') {
-					console.log("trap to delete", $scope.traps[i]);
+				if ($scope.traps[i].effect == 'destroyStrongMonster') {
 					playCard($scope.traps, $scope.graveyard, $scope.traps[i], 'hidden', true);
 					return;
 				}
 			}
 		}
 	}
-
 }
-
 
 GameController.$inject = ['$scope'];
 angular.module('app').controller('GameCtrl', GameController);
