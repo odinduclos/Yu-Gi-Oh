@@ -38,8 +38,7 @@ function GameController ($scope) {
 			{_id: 18, type: 'spell', state: 'hidden', name: "Fissure", txt: "C'est une épée!", img: "Fissure.png", effect: "destroyWeakestMonster"},
 			{_id: 19, type: 'spell', state: 'hidden', name: "Monster Reborn", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "rebornMonster"},
 			{_id: 20, type: 'spell', state: 'hidden', name: "Remove trap", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "destroyTrap"},
-			{_id: 21, type: 'spell', state: 'hidden', name: "Soul exchange", txt: "C'est une épée!", img: "SoulExchange.png", effect: "sacrificeEnemyMonster"},
-			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "destroyStrongMonster"},
+			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "destroyStrongMonster"}
 		];
 		$scope.deck.name = 'deck';
 		$scope.deck.target = 'enemy_deck';
@@ -564,7 +563,8 @@ function GameController ($scope) {
 				return;
 			}
 			$scope.tip = "Select " + $scope.targets + " to increase its def by 500";
-			$scope.logs.push($scope.tip);
+			$scope.logs.push($scope.ti
+				p);
 		}
 	}
 
@@ -612,8 +612,6 @@ function GameController ($scope) {
 					playCard($scope.enemy_traps, $scope.enemy_graveyard, $scope.target_choice, 'hidden', true);
 				}
 				break;
-
-
 		}
 		$scope.target_choice = false;
 		$scope.targets_choice = [];
