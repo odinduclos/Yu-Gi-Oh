@@ -20,25 +20,25 @@ function GameController ($scope) {
 		$scope.deck = [
 			{_id: 1, stars: 4, attack: 1200, def: 1500, attack_tmp: 1200, def_tmp: 1500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Beaver Warrior", txt: "Guardien celtic!", img: "BeaverWarrior.jpg"},
 			{_id: 2, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "CelticGuardian.png"},
-			{_id: 3, stars: 4, attack: 1300, def: 1400, attack_tmp: 1300, def_tmp: 1400, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "FeralImp.jpg"},
-			{_id: 4, stars: 3, attack: 1300, def: 2000, attack_tmp: 1300, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "GiantSoldierofStone.png"},
-			{_id: 5, stars: 4, attack: 1600, def: 800, attack_tmp: 1600, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "GreatWhite.jpg"},
-			{_id: 6, stars: 4, attack: 1800, def: 1000, attack_tmp: 1800, def_tmp: 1000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "LaJinntheMysticalGenieoftheLamp.png"},
-			{_id: 7, stars: 3, attack: 1200, def: 800, attack_tmp: 1200, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "MammothGraveyard.jpg"},
-			{_id: 8, stars: 4, attack: 800, def: 2000, attack_tmp: 800, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "MysticalElf.jpg"},
-			{_id: 9, stars: 3, attack: 1200, def: 800, attack_tmp: 1200, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "SilverFang.jpg"},
-			{_id: 10, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Guardien celtic", txt: "Guardien celtic!", img: "WingedDragon,GuardianoftheFortress.jpg"},
+			{_id: 3, stars: 4, attack: 1300, def: 1400, attack_tmp: 1300, def_tmp: 1400, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Feral Imp", txt: "Guardien celtic!", img: "FeralImp.jpg"},
+			{_id: 4, stars: 3, attack: 1300, def: 2000, attack_tmp: 1300, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Giant Soldier", txt: "Guardien celtic!", img: "GiantSoldierofStone.png"},
+			{_id: 5, stars: 4, attack: 1600, def: 800, attack_tmp: 1600, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Great white shark", txt: "Guardien celtic!", img: "GreatWhite.jpg"},
+			{_id: 6, stars: 4, attack: 1800, def: 1000, attack_tmp: 1800, def_tmp: 1000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Jhinn", txt: "Guardien celtic!", img: "LaJinntheMysticalGenieoftheLamp.png"},
+			{_id: 7, stars: 3, attack: 1200, def: 800, attack_tmp: 1200, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Mammoth", txt: "Guardien celtic!", img: "MammothGraveyard.jpg"},
+			{_id: 8, stars: 4, attack: 800, def: 2000, attack_tmp: 800, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Elf", txt: "Guardien celtic!", img: "MysticalElf.jpg"},
+			{_id: 9, stars: 3, attack: 1200, def: 800, attack_tmp: 1200, def_tmp: 800, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Silver Fang", txt: "Guardien celtic!", img: "SilverFang.jpg"},
+			{_id: 10, stars: 4, attack: 1400, def: 1200, attack_tmp: 1400, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Winged Dragon", txt: "Guardien celtic!", img: "WingedDragon,GuardianoftheFortress.jpg"},
 			{_id: 11, stars: 8, attack: 3000, def: 2500, attack_tmp: 3000, def_tmp: 2500, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Dragon blanc", txt: "Dragon blanc!", img: "BlueEyesWhiteDragon.png"},
 			{_id: 12, stars: 7, attack: 2500, def: 2100, attack_tmp: 2500, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "DarkMagician.png"},
-			{_id: 13, stars: 7, attack: 2300, def: 2100, attack_tmp: 2300, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "GaiatheFierceKnight.jpg"},
-			{_id: 14, stars: 7, attack: 2400, def: 2000, attack_tmp: 2400, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "Red-EyesBDragon.jpg"},
-			{_id: 15, stars: 6, attack: 2500, def: 1200, attack_tmp: 2500, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Magicien noir", txt: "Magicien noir!", img: "SummonedSkull.png"},
-			{_id: 16, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DarkHole.png", effect: "destroyAllMonsters"},
-			{_id: 17, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "DeSpell.png", effect: "destroySpell"},
-			{_id: 18, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "Fissure.png", effect: "destroyWeakestMonster"},
-			{_id: 19, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "rebornMonster"},
-			{_id: 20, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "destroyTrap"},
-			{_id: 21, type: 'spell', state: 'hidden', name: "Epée", txt: "C'est une épée!", img: "SoulExchange.png", effect: "sacrificeEnemyMonster"},
+			{_id: 13, stars: 7, attack: 2300, def: 2100, attack_tmp: 2300, def_tmp: 2100, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Gaia", txt: "Magicien noir!", img: "GaiatheFierceKnight.jpg"},
+			{_id: 14, stars: 7, attack: 2400, def: 2000, attack_tmp: 2400, def_tmp: 2000, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Red Eyes Dragon", txt: "Magicien noir!", img: "Red-EyesBDragon.jpg"},
+			{_id: 15, stars: 6, attack: 2500, def: 1200, attack_tmp: 2500, def_tmp: 1200, state: 'visible', position: 'attack', attacked: false, type: 'monster', name: "Crâne", txt: "Magicien noir!", img: "SummonedSkull.png"},
+			{_id: 16, type: 'spell', state: 'hidden', name: "Dark Hole", txt: "C'est une épée!", img: "DarkHole.png", effect: "destroyAllMonsters"},
+			{_id: 17, type: 'spell', state: 'hidden', name: "Despell", txt: "C'est une épée!", img: "DeSpell.png", effect: "destroySpell"},
+			{_id: 18, type: 'spell', state: 'hidden', name: "Fissure", txt: "C'est une épée!", img: "Fissure.png", effect: "destroyWeakestMonster"},
+			{_id: 19, type: 'spell', state: 'hidden', name: "Monster Reborn", txt: "C'est une épée!", img: "MonsterReborn.jpg", effect: "rebornMonster"},
+			{_id: 20, type: 'spell', state: 'hidden', name: "Remove trap", txt: "C'est une épée!", img: "RemoveTrap.jpg", effect: "destroyTrap"},
+			{_id: 21, type: 'spell', state: 'hidden', name: "Soul exchange", txt: "C'est une épée!", img: "SoulExchange.png", effect: "sacrificeEnemyMonster"},
 			{_id: 24, type: 'trap', state: 'hidden', name: "Trou", txt: "C'est un trou!", img: "TrapHole.jpg", effect: "destroyStrongMonster"},
 		];
 		$scope.deck.name = 'deck';
@@ -132,13 +132,6 @@ function GameController ($scope) {
 	// notifié que la partie finit
 	socket.on('endGame', function (data) {
 		$scope.$apply(function () {
-			/*if (data.error != 0) {
-				$scope.logs.push(data.message);
-			}
-			$scope.game = false;
-			$scope.tip = 'The game end!';
-			$scope.logs.push('The game end!');
-			init_vars();*/
 			show_modal(data.message);
 		});
 	});
@@ -589,23 +582,6 @@ function GameController ($scope) {
 				}
 			};
 		};
-		/*var next = false;
-		$scope.targets_choice.forEach(function (stack) {
-			if (next) {
-				$scope.target_choice = stack[0];
-				$scope.target_stack_choice = stack.name;
-				return;
-			}
-			for (var i = 0; i < stack.length; i++) {
-				if (stack[i]._id == card._id && i < stack.length - 1) {
-					$scope.target_choice = stack[++i];
-					$scope.target_stack_choice = stack.name;
-					return;
-				} else if (stack[i]._id == card._id && i == stack.length - 1) {
-					next = true;
-				}
-			};
-		});*/
 	}
 
 	$scope.previous_target = function (card) {
@@ -623,22 +599,6 @@ function GameController ($scope) {
 				}
 			};
 		};
-		/*$scope.targets_choice.forEach(function (stack) {
-			if (next) {
-				$scope.target_choice = stack[stack.length - 1];
-				$scope.target_stack_choice = stack.name;
-				return;
-			}
-			for (var i = stack.length - 1; i >= 0; i--) {
-				if (stack[i]._id == card._id && i > 0) {
-					$scope.target_choice = stack[--i];
-					$scope.target_stack_choice = stack.name;
-					return;
-				} else if (stack[i]._id == card._id && i == 0) {
-					next = true;
-				}
-			};
-		});*/
 	}
 
 	$scope.validate = function () {
