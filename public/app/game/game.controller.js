@@ -256,6 +256,8 @@ function GameController ($scope) {
 		card.state = state;
 		if (state == 'hidden') {
 			card.position = 'defense';
+		} else if (state == 'defense') {
+			card.position = 'defense';
 		}
 		// if (!emit) {
 			// console.log("receive from server", {error: 0, source: source.target, destination: destination.target, card: card, state: state})
@@ -481,6 +483,8 @@ function GameController ($scope) {
 			card.position = 'defense';
 		} else if (card.position == 'defense') {
 			card.position = 'attack';
+		} else {
+			card.position = 'attack';
 		}
 		change_switch_value(card);
 	}
@@ -697,8 +701,15 @@ function GameController ($scope) {
 
 	function rebornMonster() {
 		$scope.action = 'dead monster selection';
-		$scope.target_choice = $scope.graveyard[0];
-		$scope.target_stack_choice = 'graveyard';
+		if ($scope.graveyard.length > 0) {
+			$scope.target_choice = $scope.graveyard[0];
+			$scope.target_stack_choice = 'graveyard';
+		} else if ($scope.enemy_graveyard.length > 0) {
+			$scope.target_choice = $scope.enemy_graveyard[0];
+			$scope.target_stack_choice = 'enemy_graveyard';
+		} else {
+			return;
+		}
 		$scope.targets_choice = [$scope.graveyard, $scope.enemy_graveyard];
 		$scope.validate_target = false;
 		show_buttons(null);
