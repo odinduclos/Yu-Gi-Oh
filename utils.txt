@@ -1,8 +1,8 @@
 cd .\Yu-Gi-Oh && npm install -d
 
-node C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh\app.js
-
 & 'C:\Program Files\MongoDB 2.6 Standard\bin\mongod.exe' --dbpath "C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh\data"
+
+node C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh\app.js
 
 
 
