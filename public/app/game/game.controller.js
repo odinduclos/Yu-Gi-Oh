@@ -563,8 +563,7 @@ function GameController ($scope) {
 				return;
 			}
 			$scope.tip = "Select " + $scope.targets + " to increase its def by 500";
-			$scope.logs.push($scope.ti
-				p);
+			$scope.logs.push($scope.tip);
 		}
 	}
 
