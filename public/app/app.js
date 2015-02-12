@@ -1,5 +1,5 @@
 var app = angular
-	.module('app', ['ngResource', 'ngRoute'])
+	.module('app', ['ngResource', 'ngRoute', 'ngStorage'])
 	.directive('draggable', ['$document' , function($document) {
 		return {
 			restrict: 'A',
@@ -40,10 +40,25 @@ var app = angular
   		return function(items) {
     		return items.slice().reverse();
   		};
-  	});
-
-function Config ($routeProvider) {
-	$routeProvider
+  	})
+	.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
+	$routeProvider.
+	when('/', {
+		templateUrl: 'app/partials/home.html',
+		controller: 'HomeCtrl'
+	}).
+	when('/signin', {
+		templateUrl: 'app/partials/signin.html',
+		controller: 'HomeCtrl'
+	}).
+	when('/signup', {
+		templateUrl: 'app/partials/signup.html',
+		controller: 'HomeCtrl'
+	}).
+	when('/me', {
+		templateUrl: 'app/partials/me.html',
+		controller: 'HomeCtrl'
+	})
 	.when('/game', {
 		templateUrl: 'app/game/game.html',
 		controller: 'GameCtrl'
@@ -60,10 +75,26 @@ function Config ($routeProvider) {
 		templateUrl: 'app/applies/applies.html',
 		controller: 'AppliesCtrl'
 	})
-	.otherwise('/jobs', {
-		templateUrl: 'app/jobs/jobs.html',
-		controller: 'JobsCtrl'
-	})
-}
-
-app.config(Config);
+	.otherwise('/', {
+            redirectTo: '/'
+	});
+	
+	    $httpProvider.interceptors.push(['$q', '$location', '$localStorage', function($q, $location, $localStorage) {
+            return {
+                'request': function (config) {
+                    config.headers = config.headers || {};
+                    if ($localStorage.token) {
+                        config.headers.Authorization = 'Bearer ' + $localStorage.token;
+                    }
+                    return config;
+                },
+                'responseError': function(response) {
+                    if(response.status === 401 || response.status === 403) {
+                        $location.path('/signin');
+                    }
+                    return $q.reject(response);
+                }
+            };
+        }]);
+	}
+]);

@@ -17,6 +17,8 @@
     "mongoose": "^3.8.18",
     "path": "^0.4.9",
     "resource": "^0.5.3",
-    "socket.io": "^1.2.0"
+    "socket.io": "^1.2.0",
+	"jsonwebtoken": "0.4.0",
+	"morgan": "latest"
   }
 }
