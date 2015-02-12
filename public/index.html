@@ -13,6 +13,7 @@
             padding-bottom: 40px;
             background-color: #eee;
         }
+	#me, #logout, #play { display: none }
     </style>
 </head>
 <body>
@@ -29,12 +30,12 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a ng-href="#/">Home</a></li>
-                    <li><a ng-href="#/me">Me</a></li>
-                    <li><a ng-href="#/signin">Signin</a></li>
-                    <li><a ng-href="#/signup">Signup</a></li>
-                    <li><a ng-click="logout()">Logout</a></li>
-					<li><a ng-href="#/game">Jouer</a></li>
+                    <li id="home"><a ng-href="#/">Home</a></li>
+                    <li id="me"><a ng-href="#/me">Me</a></li>
+		    <li id="play"><a ng-href="#/game">Play</a></li>
+                    <li id="signin"><a ng-href="#/signin">Signin</a></li>
+                    <li id="signup"><a ng-href="#/signup">Signup</a></li>
+                    <li id="logout"><a ng-click="logout()">Logout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>

@@ -13,6 +13,7 @@ angular.module('app')
 
             Main.signin(formData, function(res) {
                 $localStorage.token = res.data.token;
+
                 $location.path('/me');
             }, function() {
                 $rootScope.error = 'Failed to signin';
@@ -27,6 +28,11 @@ angular.module('app')
 
             Main.save(formData, function(res) {
                 $localStorage.token = res.data.token;
+$("#signin").hide();
+$("#signup").hide();
+$("#me").show();
+$("#play").show();
+$("#logout").show();
                 $location.path('/me');
             }, function() {
                 $rootScope.error = 'Failed to signup';
@@ -35,6 +41,11 @@ angular.module('app')
 
         $scope.me = function() {
             Main.me(function(res) {
+$("#signin").hide();
+$("#signup").hide();
+$("#me").show();
+$("#play").show();
+$("#logout").show();
                 $scope.myDetails = res;
             }, function() {
                 $rootScope.error = 'Failed to fetch details';
@@ -43,6 +54,11 @@ angular.module('app')
 
         $scope.logout = function() {
             Main.logout(function() {
+$("#signin").show();
+$("#signup").show();
+$("#me").hide();
+$("#play").hide();
+$("#logout").hide();
                 $location.path('/');
             }, function() {
                 $rootScope.error = 'Failed to logout';
