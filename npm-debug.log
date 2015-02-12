@@ -2,86 +2,24 @@
 1 verbose cli [ 'C:\\Program Files (x86)\\nodejs\\\\node.exe',
 1 verbose cli   'C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
 1 verbose cli   'install',
-1 verbose cli   '-g',
-1 verbose cli   'mthod-override' ]
+1 verbose cli   '-d' ]
 2 info using npm@1.4.28
 3 info using node@v0.10.35
 4 verbose node symlink C:\Program Files (x86)\nodejs\\node.exe
-5 verbose cache add [ 'mthod-override', null ]
-6 verbose cache add name=undefined spec="mthod-override" args=["mthod-override",null]
-7 verbose parsed url { protocol: null,
-7 verbose parsed url   slashes: null,
-7 verbose parsed url   auth: null,
-7 verbose parsed url   host: null,
-7 verbose parsed url   port: null,
-7 verbose parsed url   hostname: null,
-7 verbose parsed url   hash: null,
-7 verbose parsed url   search: null,
-7 verbose parsed url   query: null,
-7 verbose parsed url   pathname: 'mthod-override',
-7 verbose parsed url   path: 'mthod-override',
-7 verbose parsed url   href: 'mthod-override' }
-8 silly lockFile d184a81f-mthod-override mthod-override
-9 verbose lock mthod-override C:\Users\Julien\AppData\Roaming\npm-cache\d184a81f-mthod-override.lock
-10 silly lockFile d184a81f-mthod-override mthod-override
-11 silly lockFile d184a81f-mthod-override mthod-override
-12 verbose addNamed [ 'mthod-override', '' ]
-13 verbose addNamed [ null, '*' ]
-14 silly lockFile 714c1399-mthod-override mthod-override@
-15 verbose lock mthod-override@ C:\Users\Julien\AppData\Roaming\npm-cache\714c1399-mthod-override.lock
-16 silly addNameRange { name: 'mthod-override', range: '*', hasData: false }
-17 verbose request where is /mthod-override
-18 verbose request registry https://registry.npmjs.org/
-19 verbose request id 7fdb22e61b4190dc
-20 verbose url raw /mthod-override
-21 verbose url resolving [ 'https://registry.npmjs.org/', './mthod-override' ]
-22 verbose url resolved https://registry.npmjs.org/mthod-override
-23 verbose request where is https://registry.npmjs.org/mthod-override
-24 info trying registry request attempt 1 at 17:44:41
-25 http GET https://registry.npmjs.org/mthod-override
-26 http 404 https://registry.npmjs.org/mthod-override
-27 verbose headers { date: 'Sun, 28 Dec 2014 16:44:42 GMT',
-27 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-27 verbose headers   'content-type': 'application/json',
-27 verbose headers   'cache-control': 'max-age=0',
-27 verbose headers   'content-length': '52',
-27 verbose headers   'accept-ranges': 'bytes',
-27 verbose headers   via: '1.1 varnish',
-27 verbose headers   age: '0',
-27 verbose headers   'x-served-by': 'cache-lcy1123-LCY',
-27 verbose headers   'x-cache': 'MISS',
-27 verbose headers   'x-cache-hits': '0',
-27 verbose headers   'x-timer': 'S1419785082.815985,VS0,VE87',
-27 verbose headers   'keep-alive': 'timeout=10, max=50',
-27 verbose headers   connection: 'Keep-Alive' }
-28 silly registry.get cb [ 404,
-28 silly registry.get   { date: 'Sun, 28 Dec 2014 16:44:42 GMT',
-28 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-28 silly registry.get     'content-type': 'application/json',
-28 silly registry.get     'cache-control': 'max-age=0',
-28 silly registry.get     'content-length': '52',
-28 silly registry.get     'accept-ranges': 'bytes',
-28 silly registry.get     via: '1.1 varnish',
-28 silly registry.get     age: '0',
-28 silly registry.get     'x-served-by': 'cache-lcy1123-LCY',
-28 silly registry.get     'x-cache': 'MISS',
-28 silly registry.get     'x-cache-hits': '0',
-28 silly registry.get     'x-timer': 'S1419785082.815985,VS0,VE87',
-28 silly registry.get     'keep-alive': 'timeout=10, max=50',
-28 silly registry.get     connection: 'Keep-Alive' } ]
-29 silly lockFile 714c1399-mthod-override mthod-override@
-30 silly lockFile 714c1399-mthod-override mthod-override@
-31 error 404 404 Not Found: mthod-override
-31 error 404
-31 error 404 'mthod-override' is not in the npm registry.
-31 error 404 You should bug the author to publish it
-31 error 404
-31 error 404 Note that you can also install from a
-31 error 404 tarball, folder, or http url, or git url.
-32 error System Windows_NT 6.1.7601
-33 error command "C:\\Program Files (x86)\\nodejs\\\\node.exe" "C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "-g" "mthod-override"
-34 error cwd C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh-master
-35 error node -v v0.10.35
-36 error npm -v 1.4.28
-37 error code E404
-38 verbose exit [ 1, true ]
+5 error install Couldn't read dependencies
+6 error Failed to parse json
+6 error Unexpected token }
+7 error File: C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh\package.json
+8 error Failed to parse package.json data.
+8 error package.json must be actual JSON, not just JavaScript.
+8 error
+8 error This is not a bug in npm.
+8 error Tell the package author to fix their package.json file. JSON.parse
+9 error System Windows_NT 6.1.7601
+10 error command "C:\\Program Files (x86)\\nodejs\\\\node.exe" "C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "-d"
+11 error cwd C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh
+12 error node -v v0.10.35
+13 error npm -v 1.4.28
+14 error file C:\Users\Julien\Documents\GitHub\Yu-Gi-Oh\package.json
+15 error code EJSONPARSE
+16 verbose exit [ 1, true ]
