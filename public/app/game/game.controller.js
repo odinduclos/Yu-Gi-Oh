@@ -554,17 +554,6 @@ function GameController ($scope) {
 			$scope.tip = "Select " + $scope.targets + " monster to sacrifice.";
 			$scope.logs.push("Select " + $scope.targets + " monster to sacrifice.");
 		}
-		if ($scope.action == 'increaseDef') {
-			$scope.targets--;
-			if ($scope.targets == 0) {
-				$scope.card_selected.def_tmp += 500;
-				console.log("DEF " + $scope.card_selected);
-				$scope.action = false;
-				return;
-			}
-			$scope.tip = "Select " + $scope.targets + " to increase its def by 500";
-			$scope.logs.push($scope.tip);
-		}
 	}
 
 	$scope.next_target = function (card) {
@@ -604,7 +593,9 @@ function GameController ($scope) {
 		// ici pour la validation de la carte target_choice
 		switch ($scope.action) {
 			case 'dead monster selection':
-				playCard(eval("$scope." + $scope.target_stack_choice), $scope.monsters, $scope.target_choice, 'visible', true);
+				if ($scope.target_choice.type == 'monster') {
+					playCard(eval("$scope." + $scope.target_stack_choice), $scope.monsters, $scope.target_choice, 'visible', true);
+				}
 				break;
 			case 'trap destruction':
 				if ($scope.target_choice.state == 'visible') {
@@ -673,15 +664,6 @@ function GameController ($scope) {
 	}
 
 	function destroyTrap() {
-		$scope.action = 'trap destruction';
-		$scope.target_choice = $scope.enemy_traps[0];
-		$scope.target_stack_choice = 'enemy_traps';
-		$scope.targets_choice = [$scope.enemy_traps];
-		$scope.validate_target = false;
-		show_buttons(null);
-	}
-
-	function sacrificeEnemyMonster() {
 		$scope.action = 'trap destruction';
 		$scope.target_choice = $scope.enemy_traps[0];
 		$scope.target_stack_choice = 'enemy_traps';
